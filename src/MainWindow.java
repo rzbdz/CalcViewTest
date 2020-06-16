@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
  */
 
 public class MainWindow {
+    static JTextField resultTextField;
     public static void main(String[] args) {
         setSystemLNF();
         MainGridBagLayoutWindows m = new MainGridBagLayoutWindows();
+        resultTextField.addKeyListener(new KeyPressedHandler());
     }
 
     //获取设置系统样式

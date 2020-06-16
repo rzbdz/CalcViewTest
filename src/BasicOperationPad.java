@@ -38,4 +38,11 @@ class BasicOperationButtonClickHandler extends ButtonClickHandler{
     BasicOperationButtonClickHandler(){
         super();
     }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jb = (JButton) (e.getSource());
+        String text = "you pressed" + jb.getText();
+        System.out.println(text);
+        MainWindow.resultTextField.setText(text);
+    }
 }

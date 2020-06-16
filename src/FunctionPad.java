@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * 这个Function 写的是除了加减乘除等之外的按键
@@ -34,5 +35,13 @@ class FunctionPad extends JPanel {
 class FunctionButtonClickHandler extends ButtonClickHandler{
     FunctionButtonClickHandler(){
         super();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jb = (JButton) (e.getSource());
+        String text = "you pressed" + jb.getText();
+        System.out.println(text);
+        MainWindow.resultTextField.setText(text);
     }
 }

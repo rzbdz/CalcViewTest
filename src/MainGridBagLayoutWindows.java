@@ -38,6 +38,7 @@ class MainGridBagLayoutWindows extends JFrame {
         c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 5;
+        MainWindow.resultTextField = hd.jTextField;
         hd.jTextField.setText(headerDefaultText);
         gridBagLayout.setConstraints(hd, c);
         //设置计算器M Button Menu Bar 的GridBag属性

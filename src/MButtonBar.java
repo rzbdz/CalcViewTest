@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * 这个类是 M 键,M键的解释是:
@@ -40,5 +41,12 @@ class MButtonBar extends JPanel {
 class MButtonClickHandler extends ButtonClickHandler{
     MButtonClickHandler(){
         super();
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jb = (JButton) (e.getSource());
+        String text = "you pressed" + jb.getText();
+        System.out.println(text);
+        MainWindow.resultTextField.setText(text);
     }
 }
