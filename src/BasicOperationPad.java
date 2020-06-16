@@ -11,6 +11,12 @@ import java.awt.event.ActionEvent;
 class BasicOperationPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
     static String[] FButtonStrings = {"←", "÷", "×", "－", "＋", "＝"};
+    public static final String BACKSPACE = "←";
+    public static final String DEVIDE = "÷";
+    public static final String TIMES= "×";
+    public static final String PLUS = "＋";
+    public static final String MINUS = "－";
+    public static final String EQUALS = "＝";
 
     BasicOperationPad() {
         this.buttonClickHandler = new BasicOperationButtonClickHandler();
@@ -41,8 +47,18 @@ class BasicOperationButtonClickHandler extends ButtonClickHandler{
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton jb = (JButton) (e.getSource());
-        String text = "you pressed" + jb.getText();
-        System.out.println(text);
+        String text = MainWindow.resultTextField.getText();
+        if(jb.getText().equals(BasicOperationPad.BACKSPACE)){
+            if(text.length()==1){
+                text = "000";
+            }else{
+                text = text.substring(0, text.length()-1);
+            }
+
+        }else{
+            text = "you pressed" + jb.getText();
+            System.out.println(text);
+        }
         MainWindow.resultTextField.setText(text);
     }
 }

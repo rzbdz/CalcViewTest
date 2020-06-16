@@ -8,7 +8,15 @@ import java.awt.event.ActionEvent;
  */
 class FunctionPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
-    static String[] FButtonStrings = {"%", "CE", "C", "1/x", "x^2", "√x"};
+    static String[] FButtonStrings = {"%", "CE", "C"};
+    static String[] FButtonStringsWithX = {"1/x", "x²", "√x"};
+
+    public static final String MOD = "%";
+    public static final String CE = "CE";
+    public static final String C = "C";
+    public static final String ONE_DEVIDE_X = "1/x";
+    public static final String X_SQURE = "x²";
+    public static final String SQRT = "√x";
 
     FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
@@ -16,12 +24,21 @@ class FunctionPad extends JPanel {
         for (String s : FButtonStrings) {
             add(new FunctionButton(s, buttonClickHandler));
         }
+        for (String s : FButtonStringsWithX) {
+            add(new FunctionButton(s, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 18)));
+        }
     }
 
     private class FunctionButton extends JButton {
         FunctionButton(String text, ButtonClickHandler handler) {
             super(text);
             setFont(new BasicFont(Font.PLAIN, 18));
+            this.addActionListener(handler);
+        }
+
+        FunctionButton(String text, ButtonClickHandler handler, Font font) {
+            super(text);
+            setFont(font);
             this.addActionListener(handler);
         }
     }
@@ -32,8 +49,9 @@ class FunctionPad extends JPanel {
  * 需要重写方法:
  * public void actionPerformed(ActionEvent e);
  */
-class FunctionButtonClickHandler extends ButtonClickHandler{
-    FunctionButtonClickHandler(){
+class FunctionButtonClickHandler extends ButtonClickHandler {
+
+    FunctionButtonClickHandler() {
         super();
     }
 
@@ -42,6 +60,9 @@ class FunctionButtonClickHandler extends ButtonClickHandler{
         JButton jb = (JButton) (e.getSource());
         String text = "you pressed" + jb.getText();
         System.out.println(text);
+        if (jb.getText().equals(FunctionPad.CE) || jb.getText().equals(FunctionPad.C)) {
+            text = "000";
+        }
         MainWindow.resultTextField.setText(text);
     }
 }
