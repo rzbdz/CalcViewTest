@@ -8,15 +8,18 @@ import java.awt.*;
  */
 class MainGridBagLayoutWindows extends JFrame {
     //计算器窗口顶部标题栏的标题
-    static String windowsTitle = "垃圾玩意";
+    static String windowsTitle = "标准计算器";
     //计算器窗口内header框框的默认字
     static String headerDefaultText = "000";
     MainGridBagLayoutWindows() {
         //设置JFrame属性
         super(windowsTitle);
-        setResizable(false);
+        //setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(340, 500);
+        this.setMinimumSize(new Dimension(340,500));
+        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(screensize.width/2-170,screensize.height/2-250);
+        setSize(340,500);
         //定义计算器窗口内组件
         Header hd = new Header();
         MButtonBar mbb = new MButtonBar();
@@ -83,6 +86,6 @@ class MainGridBagLayoutWindows extends JFrame {
         add(fp);
         add(nbp);
         add(bop);
-        setVisible(true);
+        this.setVisible(true);
     }
 }
