@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 class NumberPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
 
+    public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
+    public static final String DOT = ".";
+
     NumberPad() {
         buttonClickHandler = new NumberButtonClickHandler();
         setLayout(new GridLayout(4, 3));
