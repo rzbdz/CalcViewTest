@@ -3,7 +3,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-//Main
+/**
+ * Main
+ */
+
 public class MainWindow {
     public static void main(String[] args) {
         setSystemLNF();
