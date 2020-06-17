@@ -1,6 +1,12 @@
 # CalcViewTest
 java swing awt
 
+协同:
+
+dev分支保持最新
+
+在dev 分支开发或者新建branch
+
 | 类/函数 | 注释|
 | :----------------------------------------------------------- | :----------------------------------------------------------- |
 |BasicOperationButtonClickHandler | 在这里编写基本按钮点击的事件处理 需要重写方法: public void actionPerformed(ActionEvent e); |
