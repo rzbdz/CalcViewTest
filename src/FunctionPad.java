@@ -32,13 +32,15 @@ class FunctionPad extends JPanel {
     private class FunctionButton extends JButton {
         FunctionButton(String text, ButtonClickHandler handler) {
             super(text);
+            setFocusable(false);
             setFont(new BasicFont(Font.PLAIN, 18));
             this.addActionListener(handler);
         }
 
         FunctionButton(String text, ButtonClickHandler handler, Font font) {
             super(text);
-            setFont(font);
+            setFocusable(false);
+            setFont(new BasicFont(Font.PLAIN, 18));
             this.addActionListener(handler);
         }
     }
