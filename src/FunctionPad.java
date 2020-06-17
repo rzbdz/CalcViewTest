@@ -27,7 +27,7 @@ class FunctionPad extends JPanel {
         }
         //含x字,使用公式字体
         for (String s : FButtonStringsWithX) {
-            add(new FunctionButton(s, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 18)));
+            add(new FunctionButton(s, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
         }
     }
 
@@ -35,13 +35,13 @@ class FunctionPad extends JPanel {
         FunctionButton(String text, ButtonClickHandler handler) {
             super(text);
             setFocusable(false);
-            setFont(new BasicFont(Font.PLAIN, 18));
+            setFont(new BasicFont(Font.PLAIN, 16));
             this.addActionListener(handler);
         }
         FunctionButton(String text, ButtonClickHandler handler, Font font) {
             super(text);
             setFocusable(false);
-            setFont(new BasicFont(Font.PLAIN, 18));
+            setFont(font);
             this.addActionListener(handler);
         }
     }

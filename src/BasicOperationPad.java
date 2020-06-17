@@ -30,7 +30,7 @@ class BasicOperationPad extends JPanel {
         BasicOperationButton(String text, ButtonClickHandler handler) {
             super(text);
             setFocusable(false);
-            setFont(new BasicFont(Font.PLAIN, 18));
+            setFont(new BasicFont(Font.PLAIN, 16));
             this.addActionListener(handler);
         }
     }
