@@ -29,6 +29,7 @@ class BasicOperationPad extends JPanel {
     private class BasicOperationButton extends JButton {
         BasicOperationButton(String text, ButtonClickHandler handler) {
             super(text);
+            setFocusable(false);
             setFont(new BasicFont(Font.PLAIN, 18));
             this.addActionListener(handler);
         }
@@ -56,7 +57,7 @@ class BasicOperationButtonClickHandler extends ButtonClickHandler{
             }
 
         }else{
-            text = "you pressed" + jb.getText();
+            text = "you pressed99999999999999 " + jb.getText();
             System.out.println(text);
         }
         MainWindow.resultTextField.setText(text);
