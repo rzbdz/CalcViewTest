@@ -8,6 +8,8 @@ import javax.swing.event.MenuKeyListener;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 
 class Header extends JPanel {
     JTextField resultTextField;
@@ -76,21 +78,24 @@ class Header extends JPanel {
         //构造一个文本监听器,当文本长度长于窗口宽度时调整字体大小
         resultTextField.getDocument().addDocumentListener(new DocumentListener() {
             private void filter(DocumentEvent e) {
-                System.out.println(e.getDocument().getLength());
                 ChangeFont cf;
-                if (e.getDocument().getLength() >= 20) {
-                    //某个长度的时候字号设置为超小
-                    cf = new ChangeFont(new BasicFont(Font.BOLD, 20));
-                } else if (e.getDocument().getLength() >= 16) {
-                    //某个长度的时候字号设置为最小
-                    cf = new ChangeFont(new BasicFont(Font.BOLD, 26));
-                } else if (e.getDocument().getLength() >= 14) {
-                    //某个长度的时候字号设置为中等
-                    cf = new ChangeFont(new BasicFont(Font.BOLD, 30));
-                } else {
-                    //某个长度的时候字号设置为最大
-                    cf = new ChangeFont(new BasicFont(Font.BOLD, 36));
+                String content;
+                try {
+                    content = e.getDocument().getText(0, e.getDocument().getLength());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    content = "";
                 }
+                //这里是用来暴力计算结果文本框的字符串对应字体长度从而改变字号的
+                //使用Font的getStringBounds的getWidth计算,避免人工暴力设定值,
+                //考虑小数点,逗号,符号,数字的宽度不同
+                Font font = new BasicFont(Font.BOLD,48);
+                for(int i = 36;font.getStringBounds(content,
+                        new FontRenderContext(new AffineTransform(), true, true)).getWidth()
+                        +40>=MainGridBagLayoutWindows.windowWidth;i--){
+                    font = new BasicFont(Font.BOLD,i);
+                }
+                cf = new ChangeFont(font);
                 //稍后执行changeFont操作
                 //这里这样调用是因为使用JTextField进入了Document部分,
                 //JTextField被加锁
@@ -155,7 +160,7 @@ class Header extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == jmitSeleteAll){
+            if (e.getSource() == jmitSeleteAll) {
                 System.out.println("press select all");
                 Header.this.resultTextField.requestFocus();
                 Header.this.resultTextField.selectAll();
