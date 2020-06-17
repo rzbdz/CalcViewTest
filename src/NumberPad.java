@@ -33,7 +33,7 @@ class NumberPad extends JPanel {
         NumberButton(String text, ButtonClickHandler handler) {
             super(text);
             setFocusable(false);
-            setFont(new BasicFont(Font.BOLD, 18));
+            setFont(new BasicFont(Font.BOLD, 16));
             this.addActionListener(handler);
         }
     }
@@ -53,7 +53,17 @@ class NumberButtonClickHandler extends ButtonClickHandler{
         JButton jb = (JButton) (e.getSource());
         String text = "you pressed" + jb.getText();
         System.out.println(text);
-        MainWindow.resultTextField.setText(MainWindow.resultTextField.getText()+jb.getText());
+        if(jb.getText().equals(NumberPad.TURN_POSITIVE_OR_NEGATIVE)){
+            if(MainWindow.resultTextField.getText().charAt(0)=='-'){
+                MainWindow.resultTextField.setText(MainWindow.resultTextField.getText().substring(1,MainWindow.resultTextField.getText().length()));
+            }else{
+                MainWindow.resultTextField.setText("-"+MainWindow.resultTextField.getText());
+            }
+
+        }else{
+            MainWindow.resultTextField.setText(MainWindow.resultTextField.getText()+jb.getText());
+        }
+
     }
 
 
