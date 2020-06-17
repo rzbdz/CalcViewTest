@@ -32,6 +32,7 @@ class NumberPad extends JPanel {
     private class NumberButton extends JButton {
         NumberButton(String text, ButtonClickHandler handler) {
             super(text);
+            setFocusable(false);
             setFont(new BasicFont(Font.BOLD, 18));
             this.addActionListener(handler);
         }

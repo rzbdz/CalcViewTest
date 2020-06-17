@@ -27,6 +27,7 @@ class MButtonBar extends JPanel {
     private class MButton extends JButton {
         MButton(String text, ButtonClickHandler handler) {
             super(text);
+            setFocusable(false);
             setFont(new BasicFont(Font.BOLD, 12));
             this.addActionListener(handler);
         }
