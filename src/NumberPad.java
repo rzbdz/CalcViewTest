@@ -53,7 +53,7 @@ class NumberButtonClickHandler extends ButtonClickHandler{
         JButton jb = (JButton) (e.getSource());
         String text = "you pressed" + jb.getText();
         System.out.println(text);
-        MainWindow.resultTextField.setText(text);
+        MainWindow.resultTextField.setText(MainWindow.resultTextField.getText()+jb.getText());
     }
 
 
