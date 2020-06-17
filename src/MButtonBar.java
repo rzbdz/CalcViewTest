@@ -15,13 +15,22 @@ import java.awt.event.ActionEvent;
 class MButtonBar extends JPanel {
     ButtonClickHandler buttonClickHandler;
     static String[] MButtonStrings = {"MC", "MR", "M+", "M-", "MS"};
+    MButton MCButton;
+    MButton MRButton;
+    MButton MPlusButton;
+    MButton MMinusButton;
+    MButton MSaveButton;
 
     MButtonBar() {
         this.buttonClickHandler = new MButtonClickHandler();
         setLayout(new GridLayout(1, 5));
-        for (String s : MButtonStrings) {
-            add(new MButton(s, buttonClickHandler));
-        }
+        this.add(MCButton = new MButton(MButtonStrings[0], buttonClickHandler));
+        this.add(MRButton = new MButton(MButtonStrings[1], buttonClickHandler));
+        this.add(MPlusButton = new MButton(MButtonStrings[2], buttonClickHandler));
+        this.add(MMinusButton = new MButton(MButtonStrings[3], buttonClickHandler));
+        this.add(MSaveButton = new MButton(MButtonStrings[4], buttonClickHandler));
+        this.MCButton.setEnabled(false);
+        this.MRButton.setEnabled(false);
     }
 
     private class MButton extends JButton {
@@ -39,10 +48,11 @@ class MButtonBar extends JPanel {
  * 需要重写方法:
  * public void actionPerformed(ActionEvent e);
  */
-class MButtonClickHandler extends ButtonClickHandler{
-    MButtonClickHandler(){
+class MButtonClickHandler extends ButtonClickHandler {
+    MButtonClickHandler() {
         super();
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton jb = (JButton) (e.getSource());
