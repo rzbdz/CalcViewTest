@@ -21,9 +21,11 @@ class FunctionPad extends JPanel {
     FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
         setLayout(new GridLayout(2, 3));
+        //普通字,使用默认字体
         for (String s : FButtonStrings) {
             add(new FunctionButton(s, buttonClickHandler));
         }
+        //含x字,使用公式字体
         for (String s : FButtonStringsWithX) {
             add(new FunctionButton(s, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 18)));
         }
@@ -36,7 +38,6 @@ class FunctionPad extends JPanel {
             setFont(new BasicFont(Font.PLAIN, 18));
             this.addActionListener(handler);
         }
-
         FunctionButton(String text, ButtonClickHandler handler, Font font) {
             super(text);
             setFocusable(false);
