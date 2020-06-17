@@ -8,18 +8,29 @@ import java.awt.*;
  */
 class MainGridBagLayoutWindows extends JFrame {
     //计算器窗口顶部标题栏的标题
-    static String windowsTitle = "标准计算器";
+    static final String windowTitle = "标准计算器";
     //计算器窗口内header框框的默认字
-    static String headerDefaultText = "000";
+    static final String headerDefaultText = "9,999,999,999,999,999";
+    //窗口最小宽度
+    static final int windowWidth = 340;
+    //窗口最小高度
+    static final int windowHeight = 500;
     MainGridBagLayoutWindows() {
         //设置JFrame属性
-        super(windowsTitle);
+        super(windowTitle);
+        this.addComponentListener(new ResizeListener());
         //setResizable(false);
+        JMenuBar jmb = new JMenuBar();
+        JMenu help = new JMenu("内存");
+        help.add(new JMenuItem("读取内存"));
+        help.add(new JMenuItem("查看记录"));
+        jmb.add(help);
+        setJMenuBar(jmb);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setMinimumSize(new Dimension(340,500));
+        this.setMinimumSize(new Dimension(windowWidth, windowHeight));
         Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(screensize.width/2-170,screensize.height/2-250);
-        setSize(340,500);
+        this.setLocation(screensize.width/2-(windowWidth/2),screensize.height/2-(windowHeight/2));
+        setSize(windowWidth,windowHeight);
         //定义计算器窗口内组件
         Header hd = new Header();
         MButtonBar mbb = new MButtonBar();
@@ -36,13 +47,13 @@ class MainGridBagLayoutWindows extends JFrame {
         //下面全是magic number,尽量不要改
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
-        c.weighty = 0.3;
+        c.weighty = 0.45;
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 5;
-        MainWindow.resultTextField = hd.jTextField;
-        hd.jTextField.setText(headerDefaultText);
+        MainWindow.resultTextField = hd.resultTextField;
+        hd.resultTextField.setText(headerDefaultText);
         gridBagLayout.setConstraints(hd, c);
         //设置计算器M Button Menu Bar 的GridBag属性
         //下面全是magic number,尽量不要改
