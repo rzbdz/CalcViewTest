@@ -15,15 +15,24 @@ class MainGridBagLayoutWindows extends JFrame {
     static final int windowWidth = 340;
     //窗口最小高度
     static final int windowHeight = 500;
+    Header hd ;
+    MButtonBar mbb ;
+    FunctionPad fp ;
+    NumberPad nbp ;
+    BasicOperationPad bop;
     MainGridBagLayoutWindows() {
         //设置JFrame属性
         super(windowTitle);
         this.addComponentListener(new ResizeListener());
         //setResizable(false);
         JMenuBar jmb = new JMenuBar();
-        JMenu help = new JMenu("内存");
-        help.add(new JMenuItem("读取内存"));
-        help.add(new JMenuItem("查看记录"));
+        JMenu memory = new JMenu("内存");
+        memory.add(new JMenuItem("读取内存"));
+        memory.add(new JMenuItem("查看记录"));
+        JMenu help = new JMenu("帮助");
+        help.add(new JMenuItem("使用方法"));
+        help.add(new JMenuItem("关于"));
+        jmb.add(memory);
         jmb.add(help);
         setJMenuBar(jmb);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -32,11 +41,11 @@ class MainGridBagLayoutWindows extends JFrame {
         this.setLocation(screensize.width/2-(windowWidth/2),screensize.height/2-(windowHeight/2));
         setSize(windowWidth,windowHeight);
         //定义计算器窗口内组件
-        Header hd = new Header();
-        MButtonBar mbb = new MButtonBar();
-        FunctionPad fp = new FunctionPad();
-        NumberPad nbp = new NumberPad();
-        BasicOperationPad bop = new BasicOperationPad();
+        hd = new Header();
+        mbb = new MButtonBar();
+        fp = new FunctionPad();
+        nbp = new NumberPad();
+        bop = new BasicOperationPad();
         //定义Layout
         GridBagLayout gridBagLayout = new GridBagLayout();
         //设置layout
@@ -53,6 +62,7 @@ class MainGridBagLayoutWindows extends JFrame {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 5;
         MainWindow.resultTextField = hd.resultTextField;
+        MainWindow.processTextField = hd.processTextField;
         hd.resultTextField.setText(headerDefaultText);
         gridBagLayout.setConstraints(hd, c);
         //设置计算器M Button Menu Bar 的GridBag属性

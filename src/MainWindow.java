@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 public class MainWindow {
     static JTextField resultTextField;
+    static JTextField processTextField;
     public static void main(String[] args) {
         setSystemLNF();
         MainGridBagLayoutWindows m = new MainGridBagLayoutWindows();
