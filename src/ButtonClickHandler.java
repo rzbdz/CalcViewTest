@@ -1,10 +1,8 @@
 import com.sun.tools.javac.Main;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * 这个类就是ButtonClickHandler
@@ -26,13 +24,21 @@ class KeyPressedHandler implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
-    }
+}
+
+class ResizeListener extends ComponentAdapter{
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
+    public void componentResized(ComponentEvent e) {
+        Dimension d = (e.getComponent()).getSize();
+        if(d.height<MainGridBagLayoutWindows.windowHeight||d.width<MainGridBagLayoutWindows.windowWidth){
+            ((JFrame)(e.getComponent())).setResizable(false);
+            (e.getComponent()).setSize(MainGridBagLayoutWindows.windowWidth,MainGridBagLayoutWindows.windowHeight);
+            ((JFrame)(e.getComponent())).setResizable(true);
+        }
     }
-
 }
