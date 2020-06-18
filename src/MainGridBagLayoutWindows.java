@@ -13,6 +13,7 @@ import java.text.Collator;
  * 构造函数会创建一个完整的计算器窗口
  */
 class MainGridBagLayoutWindows extends JFrame {
+    static private MainGridBagLayoutWindows instance;
     //计算器窗口顶部标题栏的标题
     static final String windowTitle = "标准计算器";
     //计算器窗口内header框框的默认字
@@ -21,12 +22,17 @@ class MainGridBagLayoutWindows extends JFrame {
     static final int windowWidth = 340;
     //窗口最小高度
     static final int windowHeight = 500;
-    Header hd ;
-    MButtonBar mbb ;
-    FunctionPad fp ;
-    NumberPad nbp ;
-    BasicOperationPad bop;
-    MainGridBagLayoutWindows() {
+    private Header hd ;
+    private MButtonBar mbb ;
+    private FunctionPad fp ;
+    private NumberPad nbp ;
+    private BasicOperationPad bop;
+    public static MainGridBagLayoutWindows getInstance(){
+        if(instance==null)
+            instance =  new MainGridBagLayoutWindows();
+        return instance;
+    }
+    private MainGridBagLayoutWindows() {
         //设置JFrame属性
         super(windowTitle);
         this.addComponentListener(new ResizeListener());
@@ -43,7 +49,13 @@ class MainGridBagLayoutWindows extends JFrame {
         jsp.setForeground(Color.WHITE);
         jsp.setBorder(new EmptyBorder(0,0,0,0));
         JRadioButton jtb = new JRadioButton("置顶");
-        jtb.addActionListener(new AlwayOnTopButtonListener());
+        jtb.addActionListener(e -> {
+            if(((JRadioButton)(e.getSource())).isSelected()){
+                MainWindow.m.setAlwaysOnTop(true);
+            }else{
+                MainWindow.m.setAlwaysOnTop(false);
+            }
+        });
         jtb.setFont(new BasicFont(Font.PLAIN,memory.getFont().getSize()));
         jtb.setBackground(Color.WHITE);
         jtb.setFocusPainted(false);
@@ -58,11 +70,11 @@ class MainGridBagLayoutWindows extends JFrame {
         this.setLocation(screensize.width/2-(windowWidth/2),screensize.height/2-(windowHeight/2));
         setSize(windowWidth,windowHeight);
         //定义计算器窗口内组件
-        hd = new Header();
-        mbb = new MButtonBar();
-        fp = new FunctionPad();
-        nbp = new NumberPad();
-        bop = new BasicOperationPad();
+        hd = Header.getInstance();
+        mbb = MButtonBar.getInstance();
+        fp = FunctionPad.getInstance();
+        nbp = NumberPad.getInstance();
+        bop =BasicOperationPad.getInstance();
         //定义Layout
         GridBagLayout gridBagLayout = new GridBagLayout();
         //设置layout
@@ -78,9 +90,9 @@ class MainGridBagLayoutWindows extends JFrame {
         c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 5;
-        MainWindow.resultTextField = hd.resultTextField;
-        MainWindow.processTextField = hd.processTextField;
-        hd.resultTextField.setText(headerDefaultText);
+        MainWindow.resultTextField = hd.getResultTextField();
+        MainWindow.processTextField = hd.getProcessTextField();
+        hd.getResultTextField().setText(headerDefaultText);
         gridBagLayout.setConstraints(hd, c);
         //设置计算器M Button Menu Bar 的GridBag属性
         //下面全是magic number,尽量不要改
@@ -125,15 +137,5 @@ class MainGridBagLayoutWindows extends JFrame {
         add(nbp);
         add(bop);
         this.setVisible(true);
-    }
-    private class AlwayOnTopButtonListener implements ActionListener{
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(((JRadioButton)(e.getSource())).isSelected()){
-                MainWindow.m.setAlwaysOnTop(true);
-            }else{
-                MainWindow.m.setAlwaysOnTop(false);
-            }
-        }
     }
 }

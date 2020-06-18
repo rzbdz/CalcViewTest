@@ -14,7 +14,7 @@ public class MainWindow {
     static MainGridBagLayoutWindows m;
     public static void main(String[] args) {
         setSystemLNF();
-        m = new MainGridBagLayoutWindows();
+        m = MainGridBagLayoutWindows.getInstance();
         resultTextField.addKeyListener(new KeyPressedHandler());
     }
 

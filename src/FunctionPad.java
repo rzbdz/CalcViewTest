@@ -17,8 +17,13 @@ class FunctionPad extends JPanel {
     public static final String ONE_DEVIDE_X = "1/x";
     public static final String X_SQURE = "x²";
     public static final String SQRT = "√x";
-
-    FunctionPad() {
+    private static FunctionPad functionPad;
+    public  static  FunctionPad getInstance(){
+        if(functionPad == null)
+            functionPad = new FunctionPad();
+        return functionPad;
+    }
+    private FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
         setLayout(new GridLayout(2, 3));
         //普通字,使用默认字体
@@ -45,27 +50,27 @@ class FunctionPad extends JPanel {
             this.addActionListener(handler);
         }
     }
-}
+    /**
+     * 在这里编写功能按钮点击的事件处理
+     * 需要重写方法:
+     * public void actionPerformed(ActionEvent e);
+     */
+    private class FunctionButtonClickHandler extends ButtonClickHandler {
 
-/**
- * 在这里编写功能按钮点击的事件处理
- * 需要重写方法:
- * public void actionPerformed(ActionEvent e);
- */
-class FunctionButtonClickHandler extends ButtonClickHandler {
-
-    FunctionButtonClickHandler() {
-        super();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JButton jb = (JButton) (e.getSource());
-        String text = "you pressed" + jb.getText();
-        System.out.println(text);
-        if (jb.getText().equals(FunctionPad.CE) || jb.getText().equals(FunctionPad.C)) {
-            text = "000";
+        FunctionButtonClickHandler() {
+            super();
         }
-        MainWindow.resultTextField.setText(text);
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton jb = (JButton) (e.getSource());
+            String text = "you pressed" + jb.getText();
+            System.out.println(text);
+            if (jb.getText().equals(FunctionPad.CE) || jb.getText().equals(FunctionPad.C)) {
+                text = "000";
+            }
+            MainWindow.resultTextField.setText(text);
+        }
     }
 }
+

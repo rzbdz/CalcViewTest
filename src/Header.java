@@ -12,14 +12,29 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
 class Header extends JPanel {
-    JTextField resultTextField;
-    JTextField processTextField;
-    JPopupMenu rightResultPopupMenu;
-    JMenuItem jmitCopy;
-    JMenuItem jmitPaste;
-    JMenuItem jmitSeleteAll;
+    private static Header header;
+    private JTextField resultTextField;
 
-    Header() {
+    public JTextField getResultTextField() {
+        return resultTextField;
+    }
+
+    public JTextField getProcessTextField() {
+        return processTextField;
+    }
+
+    private JTextField processTextField;
+    private JPopupMenu rightResultPopupMenu;
+    private JMenuItem jmitCopy;
+    private JMenuItem jmitPaste;
+    private JMenuItem jmitSeleteAll;
+    public static Header getInstance(){
+        if(header==null){
+            header = new Header();
+        }
+        return header;
+    }
+    private Header() {
         //显示算式的文本框
         processTextField = new JTextField();
         processTextField.setHorizontalAlignment(JTextField.RIGHT);
@@ -41,7 +56,13 @@ class Header extends JPanel {
         jmitCopy = new JMenuItem("复制");
         jmitPaste = new JMenuItem("粘贴");
         jmitSeleteAll = new JMenuItem("全选");
-        jmitSeleteAll.addActionListener(new PopupMenuListener());
+        jmitSeleteAll.addActionListener(e -> {
+            if (e.getSource() == jmitSeleteAll) {
+                System.out.println("press select all");
+                Header.this.resultTextField.requestFocus();
+                Header.this.resultTextField.selectAll();
+            }
+        });
         rightResultPopupMenu.add(jmitCopy);
         rightResultPopupMenu.add(jmitPaste);
         rightResultPopupMenu.add(jmitSeleteAll);
@@ -156,15 +177,4 @@ class Header extends JPanel {
         }
     }
 
-    private class PopupMenuListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == jmitSeleteAll) {
-                System.out.println("press select all");
-                Header.this.resultTextField.requestFocus();
-                Header.this.resultTextField.selectAll();
-            }
-        }
-    }
 }

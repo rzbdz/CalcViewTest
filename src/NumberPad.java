@@ -10,8 +10,14 @@ class NumberPad extends JPanel {
 
     public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
     public static final String DOT = ".";
-
-    NumberPad() {
+    private static NumberPad numberPad;
+    public static NumberPad getInstance(){
+        if(numberPad==null){
+            numberPad = new NumberPad();
+        }
+        return numberPad;
+    }
+    private NumberPad() {
         buttonClickHandler = new NumberButtonClickHandler();
         setLayout(new GridLayout(4, 3));
         for (int i = 7; i >= 1; i -= 3) {
@@ -37,34 +43,33 @@ class NumberPad extends JPanel {
             this.addActionListener(handler);
         }
     }
-}
+    /**
+     * 在这里编写数字按钮点击的事件处理
+     * 需要重写方法:
+     * public void actionPerformed(ActionEvent e);
+     */
+    private class NumberButtonClickHandler extends ButtonClickHandler{
+        NumberButtonClickHandler(){
+            super();
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton jb = (JButton) (e.getSource());
+            String text = "you pressed" + jb.getText();
+            System.out.println(text);
+            if(jb.getText().equals(NumberPad.TURN_POSITIVE_OR_NEGATIVE)){
+                if(MainWindow.resultTextField.getText().charAt(0)=='-'){
+                    MainWindow.resultTextField.setText(MainWindow.resultTextField.getText().substring(1,MainWindow.resultTextField.getText().length()));
+                }else{
+                    MainWindow.resultTextField.setText("-"+MainWindow.resultTextField.getText());
+                }
 
-/**
- * 在这里编写数字按钮点击的事件处理
- * 需要重写方法:
- * public void actionPerformed(ActionEvent e);
- */
-class NumberButtonClickHandler extends ButtonClickHandler{
-    NumberButtonClickHandler(){
-        super();
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JButton jb = (JButton) (e.getSource());
-        String text = "you pressed" + jb.getText();
-        System.out.println(text);
-        if(jb.getText().equals(NumberPad.TURN_POSITIVE_OR_NEGATIVE)){
-            if(MainWindow.resultTextField.getText().charAt(0)=='-'){
-                MainWindow.resultTextField.setText(MainWindow.resultTextField.getText().substring(1,MainWindow.resultTextField.getText().length()));
             }else{
-                MainWindow.resultTextField.setText("-"+MainWindow.resultTextField.getText());
+                MainWindow.resultTextField.setText(MainWindow.resultTextField.getText()+jb.getText());
             }
 
-        }else{
-            MainWindow.resultTextField.setText(MainWindow.resultTextField.getText()+jb.getText());
         }
-
     }
 
-
 }
+

@@ -13,15 +13,20 @@ import java.awt.event.ActionEvent;
  * 具体可以参照微软计算器的内存栏和M键
  */
 class MButtonBar extends JPanel {
-    ButtonClickHandler buttonClickHandler;
+    private ButtonClickHandler buttonClickHandler;
     static String[] MButtonStrings = {"MC", "MR", "M+", "M-", "MS"};
-    MButton MCButton;
-    MButton MRButton;
-    MButton MPlusButton;
-    MButton MMinusButton;
-    MButton MSaveButton;
-
-    MButtonBar() {
+    private MButton MCButton;
+    private MButton MRButton;
+    private MButton MPlusButton;
+    private MButton MMinusButton;
+    private MButton MSaveButton;
+    private static MButtonBar mButtonBar;
+    public static MButtonBar getInstance(){
+        if(mButtonBar==null)
+            mButtonBar = new MButtonBar();
+        return mButtonBar;
+    }
+    private MButtonBar() {
         this.buttonClickHandler = new MButtonClickHandler();
         setLayout(new GridLayout(1, 5));
         this.add(MCButton = new MButton(MButtonStrings[0], buttonClickHandler));
