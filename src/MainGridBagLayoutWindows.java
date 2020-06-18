@@ -1,5 +1,11 @@
+import com.sun.tools.javac.Main;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.Collator;
 
 
 /**
@@ -32,8 +38,19 @@ class MainGridBagLayoutWindows extends JFrame {
         JMenu help = new JMenu("帮助");
         help.add(new JMenuItem("使用方法"));
         help.add(new JMenuItem("关于"));
+        JSeparator jsp = new JSeparator(JSeparator.HORIZONTAL);
+        jsp.setBackground(Color.WHITE);
+        jsp.setForeground(Color.WHITE);
+        jsp.setBorder(new EmptyBorder(0,0,0,0));
+        JRadioButton jtb = new JRadioButton("置顶");
+        jtb.addActionListener(new AlwayOnTopButtonListener());
+        jtb.setFont(new BasicFont(Font.PLAIN,memory.getFont().getSize()));
+        jtb.setBackground(Color.WHITE);
+        jtb.setFocusPainted(false);
         jmb.add(memory);
         jmb.add(help);
+        jmb.add(jsp);
+        jmb.add(jtb);
         setJMenuBar(jmb);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(windowWidth, windowHeight));
@@ -56,7 +73,7 @@ class MainGridBagLayoutWindows extends JFrame {
         //下面全是magic number,尽量不要改
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
-        c.weighty = 0.45;
+        c.weighty = 0.35;
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -108,5 +125,15 @@ class MainGridBagLayoutWindows extends JFrame {
         add(nbp);
         add(bop);
         this.setVisible(true);
+    }
+    private class AlwayOnTopButtonListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(((JRadioButton)(e.getSource())).isSelected()){
+                MainWindow.m.setAlwaysOnTop(true);
+            }else{
+                MainWindow.m.setAlwaysOnTop(false);
+            }
+        }
     }
 }
