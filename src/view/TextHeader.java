@@ -9,41 +9,42 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
-class TextHeaderControl extends JPanel {
-    private static TextHeaderControl header;
+class TextHeader extends JPanel {
+    private static TextHeader header;
     private JTextField resultTextField;
 
     public void setResultText(String text) {
         this.resultTextField.setText(text);
     }
 
-    public void setProcessText(String text) {
-        this.processTextField.setText(text);
+    public void setExpressionText(String text) {
+        this.expressionTextField.setText(text);
     }
 
-    private JTextField processTextField;
+    private JTextField expressionTextField;
     private JPopupMenu rightResultPopupMenu;
     private JMenuItem jMenuItemCopy;
     private JMenuItem jMenuItemPaste;
     private JMenuItem jMenuItemSeleteAll;
+    private JMenuItem jMenuItemCopyEquation;
 
-    public static TextHeaderControl getInstance() {
+    public static TextHeader getInstance() {
         if (header == null) {
-            header = new TextHeaderControl();
+            header = new TextHeader();
         }
         return header;
     }
 
-    private TextHeaderControl() {
+    private TextHeader() {
         //显示算式的文本框
-        processTextField = new JTextField();
-        processTextField.setHorizontalAlignment(JTextField.RIGHT);
-        processTextField.setEditable(false);
-        processTextField.setFocusable(true);
-        processTextField.setFont(new BasicFont(Font.PLAIN, 12));
-        processTextField.setForeground(Color.gray);
-        processTextField.setText("8+5");
-        processTextField.setBorder(new EmptyBorder(15, 5, 0, 5));
+        expressionTextField = new JTextField();
+        expressionTextField.setHorizontalAlignment(JTextField.RIGHT);
+        expressionTextField.setEditable(false);
+        expressionTextField.setFocusable(true);
+        expressionTextField.setFont(new BasicFont(Font.PLAIN, 12));
+        expressionTextField.setForeground(Color.gray);
+        expressionTextField.setText("8+5");
+        expressionTextField.setBorder(new EmptyBorder(15, 5, 0, 5));
         //显示当前按下数字和计算结果的文本框
         resultTextField = new JTextField();
         resultTextField.setHorizontalAlignment(JTextField.RIGHT);
@@ -56,23 +57,25 @@ class TextHeaderControl extends JPanel {
         jMenuItemCopy = new JMenuItem("复制");
         jMenuItemPaste = new JMenuItem("粘贴");
         jMenuItemSeleteAll = new JMenuItem("全选");
+        jMenuItemCopyEquation = new JMenuItem("复制等式");
         jMenuItemSeleteAll.addActionListener(e -> {
             if (e.getSource() == jMenuItemSeleteAll) {
                 System.out.println("press select all");
-                TextHeaderControl.this.resultTextField.requestFocus();
-                TextHeaderControl.this.resultTextField.selectAll();
+                TextHeader.this.resultTextField.requestFocus();
+                TextHeader.this.resultTextField.selectAll();
             }
         });
         rightResultPopupMenu.add(jMenuItemCopy);
         rightResultPopupMenu.add(jMenuItemPaste);
         rightResultPopupMenu.add(jMenuItemSeleteAll);
+        rightResultPopupMenu.add(jMenuItemCopyEquation);
         //构造鼠标右键监听器
         resultTextField.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 //Button3就是鼠标右键
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    rightResultPopupMenu.show(TextHeaderControl.this, e.getX(), e.getY());
+                    rightResultPopupMenu.show(TextHeader.this, e.getX(), e.getY());
                 }
             }
 
@@ -105,11 +108,15 @@ class TextHeaderControl extends JPanel {
                     content = e.getDocument().getText(0, e.getDocument().getLength());
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                }finally {
+                    if(content==null){
+                        content="";
+                    }
                 }
                 //这里是用来暴力计算结果文本框的字符串对应字体长度从而改变字号的
                 //使用Font的getStringBounds的getWidth计算,避免人工暴力设定值,
                 //考虑小数点,逗号,符号,数字的宽度不同
-                if (content!=""&&content!=null) {
+                if (!content.equals("")) {
                     Font font = new BasicFont(Font.BOLD, 48);
                     for (int i = 36; font.getStringBounds(content,
                             new FontRenderContext(new AffineTransform(), true, true)).getWidth()
@@ -151,7 +158,7 @@ class TextHeaderControl extends JPanel {
         gridBagConstraints.weighty = 0.1;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        textFieldGridBagLayout.setConstraints(processTextField, gridBagConstraints);
+        textFieldGridBagLayout.setConstraints(expressionTextField, gridBagConstraints);
         //垂直占比10分之9,水平扩展100%
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 0.9;
@@ -159,7 +166,7 @@ class TextHeaderControl extends JPanel {
         gridBagConstraints.gridy = 1;
         textFieldGridBagLayout.setConstraints(resultTextField, gridBagConstraints);
         //添加两个文本框
-        add(processTextField);
+        add(expressionTextField);
         add(resultTextField);
     }
 
@@ -174,7 +181,7 @@ class TextHeaderControl extends JPanel {
 
         @Override
         public void run() {
-            TextHeaderControl.this.resultTextField.setFont(ft);
+            TextHeader.this.resultTextField.setFont(ft);
         }
     }
 

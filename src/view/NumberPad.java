@@ -7,19 +7,19 @@ import java.awt.event.ActionEvent;
 /**
  * 这里只有 0-9 , +/- , . 按键,具体描述在下面
  */
-class NumberPadControl extends JPanel {
+class NumberPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
 
     public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
     public static final String DOT = ".";
-    private static NumberPadControl numberPad;
-    public static NumberPadControl getInstance(){
+    private static NumberPad numberPad;
+    public static NumberPad getInstance(){
         if(numberPad==null){
-            numberPad = new NumberPadControl();
+            numberPad = new NumberPad();
         }
         return numberPad;
     }
-    private NumberPadControl() {
+    private NumberPad() {
         buttonClickHandler = new NumberButtonClickHandler();
         setLayout(new GridLayout(4, 3));
         for (int i = 7; i >= 1; i -= 3) {

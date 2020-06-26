@@ -8,26 +8,32 @@ import java.awt.event.ActionEvent;
  * 这个Function 写的是除了加减乘除等之外的按键
  * 具体见字符串数组
  */
-class FunctionPadControl extends JPanel {
+class FunctionPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
-    static String[] FButtonStrings = {"%", "CE", "C"};
-    static String[] FButtonStringsWithX = {"1/x", "x²", "√x"};
-
-    public static final String MOD = "%";
+    public static final String X_Y = "xʸ";
     public static final String CE = "CE";
     public static final String C = "C";
-    public static final String ONE_DEVIDE_X = "1/x";
-    public static final String X_SQURE = "x²";
+    public static final String ONE_DIVIDES_X = "1/x";
+    public static final String X_SQUARE = "x²";
     public static final String SQRT = "√x";
-    private static FunctionPadControl functionPad;
-    public  static FunctionPadControl getInstance(){
-        if(functionPad == null)
-            functionPad = new FunctionPadControl();
+    public static final String LEFT_BRACKET = "(";
+    public static final String RIGHT_BRACKET = ")";
+    public static final String ABS = "|x|";
+    static String[] FButtonStrings = {CE, C};
+    static String[] FButtonStringsWithX = {X_Y, X_SQUARE, SQRT};
+
+    private static FunctionPad functionPad;
+
+    public static FunctionPad getInstance() {
+        if (functionPad == null)
+            functionPad = new FunctionPad();
         return functionPad;
     }
-    private FunctionPadControl() {
+
+    private FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
-        setLayout(new GridLayout(2, 3));
+        setLayout(new GridLayout(3, 3));
+        add(new FunctionButton(ONE_DIVIDES_X, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
         //普通字,使用默认字体
         for (String s : FButtonStrings) {
             add(new FunctionButton(s, buttonClickHandler));
@@ -36,6 +42,9 @@ class FunctionPadControl extends JPanel {
         for (String s : FButtonStringsWithX) {
             add(new FunctionButton(s, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
         }
+        add(new FunctionButton(LEFT_BRACKET, buttonClickHandler));
+        add(new FunctionButton(RIGHT_BRACKET, buttonClickHandler));
+        add(new FunctionButton(ABS, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
     }
 
     private class FunctionButton extends JButton {
@@ -45,6 +54,7 @@ class FunctionPadControl extends JPanel {
             setFont(new BasicFont(Font.PLAIN, 16));
             this.addActionListener(handler);
         }
+
         FunctionButton(String text, ButtonClickHandler handler, Font font) {
             super(text);
             setFocusable(false);
@@ -52,6 +62,7 @@ class FunctionPadControl extends JPanel {
             this.addActionListener(handler);
         }
     }
+
     /**
      * 在这里编写功能按钮点击的事件处理
      * 需要重写方法:
@@ -68,7 +79,7 @@ class FunctionPadControl extends JPanel {
             JButton jb = (JButton) (e.getSource());
             String text = "you pressed" + jb.getText();
             System.out.println(text);
-            if (jb.getText().equals(FunctionPadControl.CE) || jb.getText().equals(FunctionPadControl.C)) {
+            if (jb.getText().equals(FunctionPad.CE) || jb.getText().equals(FunctionPad.C)) {
                 text = "000";
             }
         }

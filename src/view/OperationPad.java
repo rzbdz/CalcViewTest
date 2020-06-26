@@ -9,25 +9,26 @@ import java.awt.event.ActionEvent;
  * 这里用了数学符号,和直接的=+-不一样,
  * 比较时要复制字符串数组的符号,或者改成直接的-=+
  */
-class OperationPadControl extends JPanel {
+class OperationPad extends JPanel {
     ButtonClickHandler buttonClickHandler;
-    static String[] FButtonStrings = {"←", "÷", "×", "－", "＋", "＝"};
     public static final String BACKSPACE = "←";
-    public static final String DEVIDE = "÷";
+    public static final String MOD = "%";
+    public static final String DIVIDES = "÷";
     public static final String TIMES = "×";
     public static final String PLUS = "＋";
     public static final String MINUS = "－";
     public static final String EQUALS = "＝";
-    private static OperationPadControl basicOperationPad;
-    public static OperationPadControl getInstance(){
+    static String[] FButtonStrings = {BACKSPACE, MOD,DIVIDES, TIMES, MINUS, PLUS, EQUALS};
+    private static OperationPad basicOperationPad;
+    public static OperationPad getInstance(){
         if(basicOperationPad==null){
-            basicOperationPad = new OperationPadControl();
+            basicOperationPad = new OperationPad();
         }
         return basicOperationPad;
     }
-    private OperationPadControl() {
+    private OperationPad() {
         this.buttonClickHandler = new BasicOperationButtonClickHandler();
-        setLayout(new GridLayout(6, 1));
+        setLayout(new GridLayout(7, 1));
         for (String s : FButtonStrings) {
             add(new BasicOperationButton(s, buttonClickHandler));
         }
@@ -56,7 +57,7 @@ class OperationPadControl extends JPanel {
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
             String text ="";
-            if (jb.getText().equals(OperationPadControl.BACKSPACE)) {
+            if (jb.getText().equals(OperationPad.BACKSPACE)) {
                 if (text.length() <= 1) {
                     text = "000";
                 } else {
