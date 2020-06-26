@@ -1,11 +1,14 @@
 package model;
 
-public class Calculation {
-    public enum SUF_SYMBOl {TIMES,PLUS,DIVIDES};
-    private SUF_SYMBOl sufSymbol;
-    public enum PRE_SYMBOl {TIMES,PLUS,DIVIDES};
-    private PRE_SYMBOl preSymbol;
+import java.math.BigDecimal;
 
-    public enum CURRENT_STATE{};
-    private CURRENT_STATE current_state;
+public class Calculation {
+    public String expression;
+    public String lastOperation;
+    public BigDecimal currentDigit;
+
+    @Override
+    public String toString() {
+        return expression;
+    }
 }
