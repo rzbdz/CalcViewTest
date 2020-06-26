@@ -26,18 +26,19 @@ public class CalculatorFrame extends JFrame {
     //窗口最小高度
     static int windowMinHeight = 500;
 
-    private TextHeaderControl textHeader;
-    private MenuButtonBarControl menuButtonBar;
-    private FunctionPadControl functionPad;
-    private NumberPadControl numberPad;
-    private OperationPadControl basicOperationPad;
+    private TextHeader textHeader;
+    private MemoryButtonBar menuButtonBar;
+    private FunctionPad functionPad;
+    private NumberPad numberPad;
+    private OperationPad basicOperationPad;
 
+    private MemoryToolFrame memoryToolFrame = null;
     void setResult(String s) {
         this.textHeader.setResultText(s);
     }
 
-    void setProcess(String s) {
-        this.textHeader.setProcessText(s);
+    void setExpression(String s) {
+        this.textHeader.setExpressionText(s);
     }
     //构造函数
     private CalculatorFrame() {
@@ -57,8 +58,24 @@ public class CalculatorFrame extends JFrame {
     private void InitializeComponents() {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu memory = new JMenu("内存");
-        memory.add(new JMenuItem("读取内存"));
-        memory.add(new JMenuItem("查看记录"));
+        JMenuItem readMemory = new JMenuItem("读取内存");
+
+        JMenuItem viewMemory = new JMenuItem("查看记录");
+        viewMemory.addActionListener(e -> {
+            if(e.getSource()==viewMemory){
+                if(this.memoryToolFrame==null){
+                    memoryToolFrame = new MemoryToolFrame(this.getX()+this.getWidth(),this.getY());
+                }else{
+                    memoryToolFrame.setVisible(true);
+                }
+
+            }
+        });
+        memory.add(readMemory);
+        memory.add(viewMemory);
+        JMenu history = new JMenu("历史");
+        JMenuItem readHistory = history.add(new JMenuItem("读取历史"));
+        JMenuItem viewHistory = history.add(new JMenuItem("查看记录"));
         JMenu help = new JMenu("帮助");
         help.add(new JMenuItem("使用方法"));
         help.add(new JMenuItem("关于"));
@@ -74,34 +91,35 @@ public class CalculatorFrame extends JFrame {
         jRadioButton.setBackground(Color.WHITE);
         jRadioButton.setFocusPainted(false);
         jMenuBar.add(memory);
+        jMenuBar.add(history);
         jMenuBar.add(help);
         jMenuBar.add(jSeparator);
         jMenuBar.add(jRadioButton);
         setJMenuBar(jMenuBar);
         //定义计算器窗口内组件
-        textHeader = TextHeaderControl.getInstance();
-        menuButtonBar = MenuButtonBarControl.getInstance();
-        functionPad = FunctionPadControl.getInstance();
-        numberPad = NumberPadControl.getInstance();
-        basicOperationPad = OperationPadControl.getInstance();
+        textHeader = TextHeader.getInstance();
+        menuButtonBar = MemoryButtonBar.getInstance();
+        functionPad = FunctionPad.getInstance();
+        numberPad = NumberPad.getInstance();
+        basicOperationPad = OperationPad.getInstance();
         //定义Layout
         GridBagLayout gridBagLayout = new GridBagLayout();
         //设置layout
         this.setLayout(gridBagLayout);
-        //这个玩意是用来搞GridBag 属性布局的
+        //这个是用来搞GridBag 属性布局的
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         //设置header的GridBag属性
-        //下面全是magic number,尽量不要改
+        //下面全是布局信息,尽量不要改
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1;
-        gridBagConstraints.weighty = 0.35;
+        gridBagConstraints.weighty = 0.25;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
         gridBagConstraints.gridheight = 5;
         gridBagLayout.setConstraints(textHeader, gridBagConstraints);
         //设置计算器M Button Menu Bar 的GridBag属性
-        //下面全是magic number,尽量不要改
+        //下面全是布局信息,尽量不要改
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 0.05;
         gridBagConstraints.gridx = 0;
@@ -110,31 +128,31 @@ public class CalculatorFrame extends JFrame {
         gridBagConstraints.gridheight = 1;
         gridBagLayout.setConstraints(menuButtonBar, gridBagConstraints);
         //设置功能键的GridBag属性
-        //下面全是magic number,尽量不要改
+        //下面全是布局信息,尽量不要改
         gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.weighty = 0.3;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 14;
-        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.gridheight = 6;
         gridBagLayout.setConstraints(functionPad, gridBagConstraints);
         //设置Number Pad的GridBag属性
-        //下面全是magic number,尽量不要改
+        //下面全是布局信息,尽量不要改
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.4;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = 14;
         gridBagConstraints.gridheight = 8;
         gridBagLayout.setConstraints(numberPad, gridBagConstraints);
         //设置Basic Operation Button的GridBag属性
-        //下面全是magic number,尽量不要改
+        //下面全是布局信息,尽量不要改
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.7;
         gridBagConstraints.gridx = 15;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 6;
-        gridBagConstraints.gridheight = 12;
+        gridBagConstraints.gridheight = 14;
         gridBagLayout.setConstraints(basicOperationPad, gridBagConstraints);
         //究极 add
         add(textHeader);
@@ -145,20 +163,31 @@ public class CalculatorFrame extends JFrame {
         this.setVisible(true);
         textHeader.setResultText("9,999");
     }
-}
+    private class ResizeListener extends ComponentAdapter {
 
-class ResizeListener extends ComponentAdapter {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            Dimension d = (e.getComponent()).getSize();
+            if(d.height< CalculatorFrame.windowMinHeight||d.width< CalculatorFrame.windowMinWidth){
+                ((JFrame)(e.getComponent())).setResizable(false);
+                (e.getComponent()).setSize(CalculatorFrame.windowMinWidth, CalculatorFrame.windowMinHeight);
+                ((JFrame)(e.getComponent())).setResizable(true);
+            }
+        }
 
-    @Override
-    public void componentResized(ComponentEvent e) {
-        Dimension d = (e.getComponent()).getSize();
-        if(d.height< CalculatorFrame.windowMinHeight||d.width< CalculatorFrame.windowMinWidth){
-            ((JFrame)(e.getComponent())).setResizable(false);
-            (e.getComponent()).setSize(CalculatorFrame.windowMinWidth, CalculatorFrame.windowMinHeight);
-            ((JFrame)(e.getComponent())).setResizable(true);
+        @Override
+        public void componentMoved(ComponentEvent e) {
+            int x = e.getComponent().getX()+e.getComponent().getWidth();
+            int y = e.getComponent().getY();
+            if(((CalculatorFrame)(e.getComponent())).memoryToolFrame!=null) {
+                ((CalculatorFrame) (e.getComponent())).memoryToolFrame.setLocation(x,y);
+            }
         }
     }
+
 }
+
+
 
 class BasicFont extends Font {
     BasicFont(int fontStyle, int size) {
