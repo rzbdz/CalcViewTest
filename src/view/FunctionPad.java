@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
 
 /**
  * 这个Function 写的是除了加减乘除等之外的按键
@@ -47,7 +48,7 @@ class FunctionPad extends JPanel {
         add(new FunctionButton(ABS, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
     }
 
-    private class FunctionButton extends JButton {
+    private static class FunctionButton extends JButton {
         FunctionButton(String text, ButtonClickHandler handler) {
             super(text);
             setFocusable(false);
@@ -68,7 +69,7 @@ class FunctionPad extends JPanel {
      * 需要重写方法:
      * public void actionPerformed(ActionEvent e);
      */
-    private class FunctionButtonClickHandler extends ButtonClickHandler {
+    private static class FunctionButtonClickHandler extends ButtonClickHandler {
 
         FunctionButtonClickHandler() {
             super();
@@ -79,8 +80,11 @@ class FunctionPad extends JPanel {
             JButton jb = (JButton) (e.getSource());
             String text = "you pressed" + jb.getText();
             System.out.println(text);
-            if (jb.getText().equals(FunctionPad.CE) || jb.getText().equals(FunctionPad.C)) {
-                text = "000";
+            if (jb.getText().equals(FunctionPad.CE)) {
+                TextHeader.setResultText(new BigDecimal("0"));
+            } else if (jb.getText().equals(FunctionPad.C)) {
+                TextHeader.setResultText(new BigDecimal("0"));
+                TextHeader.setExpressionText("");
             }
         }
     }
