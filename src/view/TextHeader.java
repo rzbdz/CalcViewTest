@@ -5,42 +5,64 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 class TextHeader extends JPanel {
-    private static TextHeader header;
-    private JTextField resultTextField;
 
-    public void setResultText(String text) {
-        this.resultTextField.setText(text);
-    }
-
-    public void setExpressionText(String text) {
-        this.expressionTextField.setText(text);
-    }
-
-    private JTextField expressionTextField;
-    private JPopupMenu rightResultPopupMenu;
-    private JMenuItem jMenuItemCopy;
-    private JMenuItem jMenuItemPaste;
-    private JMenuItem jMenuItemSeleteAll;
-    private JMenuItem jMenuItemCopyEquation;
-
+    private volatile static TextHeader header;
+    private static BigDecimal decimal = new BigDecimal("999999999999");
     public static TextHeader getInstance() {
         if (header == null) {
-            header = new TextHeader();
+            synchronized (TextHeader.class) {
+                if (header == null) header = new TextHeader();
+            }
+
         }
         return header;
     }
+
+    @Deprecated
+    public static void setResultText(String text) {
+        TextHeader.getInstance().resultTextField.setText(text);
+    }
+
+    public static void setResultText(BigDecimal bigDecimal) {
+        TextHeader.decimal = bigDecimal;
+        TextHeader.getInstance().resultTextField.setText(new DecimalFormat(",###").format(bigDecimal));
+    }
+
+    public static void setExpressionText(String text) {
+        TextHeader.getInstance().expressionTextField.setText(text);
+    }
+
+    public static String getResultText() {
+        return TextHeader.getInstance().resultTextField.getText();
+    }
+
+    public static BigDecimal getResultTextDecimal() {
+        return TextHeader.decimal;
+    }
+
+    public static String getExpressionText() {
+        return TextHeader.getInstance().expressionTextField.getText();
+    }
+
+
+    private final JTextField resultTextField;
+    private final JTextField expressionTextField;
 
     private TextHeader() {
         //显示算式的文本框
         expressionTextField = new JTextField();
         expressionTextField.setHorizontalAlignment(JTextField.RIGHT);
         expressionTextField.setEditable(false);
-        expressionTextField.setFocusable(true);
+        expressionTextField.setFocusable(false);
         expressionTextField.setFont(new BasicFont(Font.PLAIN, 12));
         expressionTextField.setForeground(Color.gray);
         expressionTextField.setText("8+5");
@@ -52,17 +74,55 @@ class TextHeader extends JPanel {
         resultTextField.setFocusable(true);
         resultTextField.setFont(new BasicFont(Font.BOLD, 36));
         resultTextField.setBorder(new EmptyBorder(0, 5, 0, 5));
+        resultTextField.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setCursor(new Cursor(Cursor.TEXT_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
         //定义这个文本框的右键弹出菜单
-        rightResultPopupMenu = new JPopupMenu();
-        jMenuItemCopy = new JMenuItem("复制");
-        jMenuItemPaste = new JMenuItem("粘贴");
-        jMenuItemSeleteAll = new JMenuItem("全选");
-        jMenuItemCopyEquation = new JMenuItem("复制等式");
+        JPopupMenu rightResultPopupMenu = new JPopupMenu();
+        JMenuItem jMenuItemCopy = new JMenuItem("复制");
+        JMenuItem jMenuItemPaste = new JMenuItem("粘贴");
+        JMenuItem jMenuItemSeleteAll = new JMenuItem("全选");
+        JMenuItem jMenuItemCopyEquation = new JMenuItem("复制等式");
         jMenuItemSeleteAll.addActionListener(e -> {
             if (e.getSource() == jMenuItemSeleteAll) {
                 System.out.println("press select all");
                 TextHeader.this.resultTextField.requestFocus();
                 TextHeader.this.resultTextField.selectAll();
+            }
+        });
+        jMenuItemCopy.addActionListener(e -> {
+            if (e.getSource() == jMenuItemCopy) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(TextHeader.this.resultTextField.getSelectedText()), null);
+            }
+        });
+        jMenuItemCopyEquation.addActionListener(e -> {
+            if (e.getSource() == jMenuItemCopyEquation) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(TextHeader.this.expressionTextField.getText() + TextHeader.this.resultTextField.getText()), null);
             }
         });
         rightResultPopupMenu.add(jMenuItemCopy);
@@ -108,9 +168,9 @@ class TextHeader extends JPanel {
                     content = e.getDocument().getText(0, e.getDocument().getLength());
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                }finally {
-                    if(content==null){
-                        content="";
+                } finally {
+                    if (content == null) {
+                        content = "";
                     }
                 }
                 //这里是用来暴力计算结果文本框的字符串对应字体长度从而改变字号的
@@ -187,3 +247,6 @@ class TextHeader extends JPanel {
 
 
 }
+
+
+
