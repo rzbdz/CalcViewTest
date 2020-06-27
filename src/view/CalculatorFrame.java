@@ -3,8 +3,7 @@ package view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 
 
 /**
@@ -13,14 +12,18 @@ import java.awt.event.ComponentEvent;
  */
 public class CalculatorFrame extends JFrame {
 
-    static private CalculatorFrame instance;
+    static volatile private CalculatorFrame instance;
 
     //单例
     public static CalculatorFrame getInstance() {
         if (instance == null)
-            instance = new CalculatorFrame();
+            synchronized (CalculatorFrame.class) {
+                if (instance == null)
+                    instance = new CalculatorFrame();
+            }
         return instance;
     }
+
     //窗口最小宽度
     static int windowMinWidth = 340;
     //窗口最小高度
@@ -33,13 +36,8 @@ public class CalculatorFrame extends JFrame {
     private OperationPad basicOperationPad;
 
     private MemoryToolFrame memoryToolFrame = null;
-    void setResult(String s) {
-        this.textHeader.setResultText(s);
-    }
 
-    void setExpression(String s) {
-        this.textHeader.setExpressionText(s);
-    }
+
     //构造函数
     private CalculatorFrame() {
         super("标准计算器");
@@ -47,8 +45,8 @@ public class CalculatorFrame extends JFrame {
         //设置JFrame属性
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(windowMinWidth, windowMinHeight));
-        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(screensize.width / 2 - (windowMinWidth / 2), screensize.height / 2 - (windowMinHeight / 2));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(screenSize.width / 2 - (windowMinWidth / 2), screenSize.height / 2 - (windowMinHeight / 2));
         setSize(windowMinWidth, windowMinHeight);
         this.addComponentListener(new ResizeListener());
         //初始化控件们
@@ -62,10 +60,10 @@ public class CalculatorFrame extends JFrame {
 
         JMenuItem viewMemory = new JMenuItem("查看记录");
         viewMemory.addActionListener(e -> {
-            if(e.getSource()==viewMemory){
-                if(this.memoryToolFrame==null){
-                    memoryToolFrame = new MemoryToolFrame(this.getX()+this.getWidth(),this.getY());
-                }else{
+            if (e.getSource() == viewMemory) {
+                if (this.memoryToolFrame == null) {
+                    memoryToolFrame = new MemoryToolFrame(this.getX() + this.getWidth(), this.getY());
+                } else {
                     memoryToolFrame.setVisible(true);
                 }
 
@@ -161,32 +159,60 @@ public class CalculatorFrame extends JFrame {
         add(numberPad);
         add(basicOperationPad);
         this.setVisible(true);
-        textHeader.setResultText("9,999");
+        textHeader.setResultText(textHeader.getResultTextDecimal());
     }
-    private class ResizeListener extends ComponentAdapter {
+
+    private static class ResizeListener extends ComponentAdapter {
 
         @Override
         public void componentResized(ComponentEvent e) {
             Dimension d = (e.getComponent()).getSize();
-            if(d.height< CalculatorFrame.windowMinHeight||d.width< CalculatorFrame.windowMinWidth){
-                ((JFrame)(e.getComponent())).setResizable(false);
+            if (d.height < CalculatorFrame.windowMinHeight || d.width < CalculatorFrame.windowMinWidth) {
+                ((JFrame) (e.getComponent())).setResizable(false);
                 (e.getComponent()).setSize(CalculatorFrame.windowMinWidth, CalculatorFrame.windowMinHeight);
-                ((JFrame)(e.getComponent())).setResizable(true);
+                ((JFrame) (e.getComponent())).setResizable(true);
             }
         }
 
         @Override
         public void componentMoved(ComponentEvent e) {
-            int x = e.getComponent().getX()+e.getComponent().getWidth();
+            int x = e.getComponent().getX() + e.getComponent().getWidth();
             int y = e.getComponent().getY();
-            if(((CalculatorFrame)(e.getComponent())).memoryToolFrame!=null) {
-                ((CalculatorFrame) (e.getComponent())).memoryToolFrame.setLocation(x,y);
+            if (((CalculatorFrame) (e.getComponent())).memoryToolFrame != null) {
+                ((CalculatorFrame) (e.getComponent())).memoryToolFrame.setLocation(x, y);
             }
         }
     }
 
 }
 
+/**
+ * 这个类就是ButtonClickHandler
+ */
+class ButtonClickHandler implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton jb = (JButton) (e.getSource());
+        System.out.println("youp ress" + jb.getText());
+    }
+}
+
+class KeyPressedHandler implements KeyListener {
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println(e.getKeyChar());
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+}
 
 
 class BasicFont extends Font {
