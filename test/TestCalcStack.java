@@ -1,17 +1,18 @@
-
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * 一个转换中缀表达式为后缀表达式的测试类
  */
 public class TestCalcStack {
     public static void main(String[] args) {
-        Stack<Item> stack = new Stack<>();
+        //官方不推荐使用java.util.Stack(继承Vector)类作为栈的实现
+        //改成ArrayDeque代替
+        //Stack<Item> stack = new Stack<>();
+        Deque<Item> stack = new ArrayDeque<>();
 
-        //构建表达式:1+2*3+2
+        //debug构建表达式:1+2*3+2
+        //因为约定Infix栈是第一个元素放在头部
         stack.push(new Num("2"));
         stack.push(new Option(Item.opt.PLUS));
         stack.push(new Num("3"));
@@ -38,38 +39,48 @@ public class TestCalcStack {
      * 如:1+2*3+2,转换成 1,2,3,*,+,2,+
      * 返回的就是stack:{peek:+,{2,+,*,3,2},bottom:1}
      * <p>
-     * 需要进一步处理:(1)优化代码(嵌套if else杀人)
-     * (2)写括号
+     * 括号没写
      * <p>
      * 返回还没写
      *
-     * @param Infix 传入一个Stack,内容是Item
+     * @param Infix 传入一个Stack,内容是Item,使用中缀表达式的stack
      * @return
      */
-    public static Stack<Item> infixToSuffix(Stack<Item> Infix) {
+    public static Stack<Item> infixToSuffix(Deque<Item> Infix) {
         Stack<Item> Output = new Stack<>();
+        //用来处理运算符
         MyStack<Item> Operators = new MyStack<>();
 
         //2020.7.2
         Item item;
-        while (!Infix.empty()) {
+        while (!Infix.isEmpty()) {
+            //中缀里,第一个元素是表达式的第一个.
+            // 如果非空就pop一个元素
             item = Infix.pop();
             if (item instanceof Num) {
+                //如果是数字,push进Output 栈里
                 Output.push(item);
             } else {
                 if (!Operators.isPrior(item) || Infix.isEmpty()) {
+                    //如果是当前元素不是优先运算符或者是结尾,如+-,
+                    //说明前一段的优先运算结束了
                     while (!Operators.isEmpty()) {
+                        //pop前一段运算
                         Output.push(Operators.pop());
                     }
                     Operators.push(item);
                 } else {
+                    //如果不是优先运算符,要先进Operators栈
+                    //直到遇到下一个优先运算符
                     Operators.push(item);
                 }
             }
         }
+        //如果Infix结束了, 清空Operator
         while (!Operators.isEmpty()) {
             Output.push(Operators.pop());
         }
+        //如果Ouput非空输出
         while (!Output.empty())
             System.out.println(Output.pop().toString());
 
@@ -117,6 +128,8 @@ abstract class Item {
 
 /**
  * Item的子类,存运算符
+ * 理想的是用一个Union
+ * 这里 伪
  */
 class Option extends Item {
     /**
@@ -213,7 +226,7 @@ class Num extends Item {
  * 主要是为了处理Stack为空的情况
  * @param <E>
  */
-class MyStack<E> extends Stack<E> {
+class MyStack<E> extends ArrayDeque<E> {
     public boolean isPrior(Object o) {
         boolean result = false;
         Option item = (Option) o;
