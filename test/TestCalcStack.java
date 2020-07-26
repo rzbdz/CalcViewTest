@@ -5,23 +5,56 @@ import java.util.*;
  * 一个转换中缀表达式为后缀表达式的测试类
  */
 public class TestCalcStack {
+
+    public static BigDecimal calc(BigDecimal b1, BigDecimal b2, Option o) {
+        switch (o.option) {
+            case PLUS:
+                return b2.add(b1);
+            case TIMES:
+                return b2.multiply(b1);
+            case MINUS:
+                return b2.subtract(b1);
+            case DIVIDES:
+                return b2.divide(b1,9,BigDecimal.ROUND_HALF_UP);
+            default:
+                return b2;
+        }
+    }
+
+    /**
+     * cast string to a infix expression stack
+     * @param exp  the string to be cast , which is expected to contain no space
+     * @return a stack of item (with the first number on the top)
+     */
+    public static Deque<Item> stringToStack(String exp){
+        Deque<Item> stack = new ArrayDeque<>();
+        for (int i = 0; i < exp.length(); ) {
+            if (exp.charAt(i) >= '0' && exp.charAt(i) <= '9') {
+                int j = i + 1;
+                while (exp.charAt(j) >= '0' && exp.charAt(j) <= '9') {
+                    j++;
+                }
+                System.out.println(exp.substring(i,j));
+                stack.addLast(new Num(exp.substring(i, j)));
+                i = j;
+            } else {
+                System.out.println("not num"+exp.charAt(i));
+                stack.addLast(new Option(exp.charAt(i)));
+                i += 1;
+            }
+        }
+        return stack;
+    }
+
     public static void main(String[] args) {
         //官方不推荐使用java.util.Stack(继承Vector)类作为栈的实现
         //改成ArrayDeque代替
         //Stack<Item> stack = new Stack<>();
-        Deque<Item> stack = new ArrayDeque<>();
 
-        //debug构建表达式:1+2*3+2
-        //因为约定Infix栈是第一个元素放在头部
-        stack.push(new Num("2"));
-        stack.push(new Option(Item.opt.PLUS));
-        stack.push(new Num("3"));
-        stack.push(new Option(Item.opt.TIMES));
-        stack.push(new Num("2"));
-        stack.push(new Option(Item.opt.PLUS));
-        stack.push(new Num("1"));
-        //调用中缀转后缀并进行打印
-        infixToSuffix(stack);
+        String exp = "35-6*4/2+5*(1+1)";
+        Deque<Item> stack = stringToStack(exp);
+        for(var i : stack) System.out.println(i.toString());
+        System.out.println(SuffixToResult(infixToSuffix(stack)).toString());
 
     }
 
@@ -46,8 +79,8 @@ public class TestCalcStack {
      * @param Infix 传入一个Stack,内容是Item,使用中缀表达式的stack
      * @return
      */
-    public static Stack<Item> infixToSuffix(Deque<Item> Infix) {
-        Stack<Item> Output = new Stack<>();
+    public static Deque<Item> infixToSuffix(Deque<Item> Infix) {
+        Deque<Item> Output = new ArrayDeque<>();
         //用来处理运算符
         MyStack<Item> Operators = new MyStack<>();
 
@@ -60,32 +93,46 @@ public class TestCalcStack {
             if (item instanceof Num) {
                 //如果是数字,push进Output 栈里
                 Output.push(item);
-            } else {
-                if (!Operators.isPrior(item) || Infix.isEmpty()) {
-                    //如果是当前元素不是优先运算符或者是结尾,如+-,
-                    //说明前一段的优先运算结束了
-                    while (!Operators.isEmpty()) {
-                        //pop前一段运算
-                        Output.push(Operators.pop());
-                    }
-                    Operators.push(item);
-                } else {
-                    //如果不是优先运算符,要先进Operators栈
-                    //直到遇到下一个优先运算符
-                    Operators.push(item);
+            } else if (((Option) item).isRightBracket()) {
+                while (!Operators.isEmpty() && !(((Option) Operators.peek()).isLeftBracket())) {
+                    Output.push(Operators.pop());
                 }
+                Operators.pop();
+
+            } else if (!Operators.isInBracket() && !Operators.isPrior(item) || Infix.isEmpty()) {
+                //如果是当前元素不是优先运算符或者是结尾,如+-,
+                //说明前一段的优先运算结束了
+                while (!Operators.isEmpty()) {
+                    //pop前一段运算
+                    Output.push(Operators.pop());
+                }
+                Operators.push(item);
+            } else {
+                //如果不是优先运算符,要先进Operators栈
+                //直到遇到下一个优先运算符
+                Operators.push(item);
             }
+
         }
         //如果Infix结束了, 清空Operator
         while (!Operators.isEmpty()) {
             Output.push(Operators.pop());
         }
         //如果Ouput非空输出
-        while (!Output.empty())
-            System.out.println(Output.pop().toString());
-
-        //
         return Output;
+    }
+
+    public static BigDecimal SuffixToResult(Deque<Item> suffixStack) {
+        Item i = suffixStack.pop();
+        if (suffixStack.isEmpty()) {
+            return ((Num) i).getDecimal();
+        } else if (i instanceof Option) {
+            return calc(SuffixToResult(suffixStack), SuffixToResult(suffixStack), (Option) i);
+        } else if (i instanceof Num) {
+            return ((Num) i).getDecimal();
+        } else {
+            return ((Num) i).getDecimal();
+        }
     }
 
 }
@@ -101,6 +148,7 @@ abstract class Item {
     public enum opt {
         PLUS, MINUS, TIMES, DIVIDES, LEFTBRA, RIGHTBRA;
     }
+
     ;
     /**
      * 供子类Operator用
@@ -114,6 +162,7 @@ abstract class Item {
     /**
      * 重写toString
      * 根据子类类型输出字符串
+     *
      * @return String
      */
     @Override
@@ -150,8 +199,13 @@ class Option extends Item {
         map.put(opt.RIGHTBRA, 2);
     }
 
+    public Item.opt getOption() {
+        return super.option;
+    }
+
     /**
      * 用枚举初始化
+     *
      * @param opti
      */
     Option(opt opti) {
@@ -160,6 +214,7 @@ class Option extends Item {
 
     /**
      * 用char初始化
+     *
      * @param o
      */
     Option(char o) {
@@ -175,11 +230,14 @@ class Option extends Item {
             this.option = opt.LEFTBRA;
         } else if (o == ')') {
             this.option = opt.RIGHTBRA;
+        }else{
+            this.option = null;
         }
     }
 
     /**
      * 获取优先级
+     *
      * @return
      */
     int getPriority() {
@@ -188,6 +246,7 @@ class Option extends Item {
 
     /**
      * 是不是左括号
+     *
      * @return
      */
     boolean isLeftBracket() {
@@ -196,6 +255,7 @@ class Option extends Item {
 
     /**
      * 是不是右括号
+     *
      * @return
      */
     boolean isRightBracket() {
@@ -204,6 +264,7 @@ class Option extends Item {
 
     /**
      * 是不是括号
+     *
      * @return
      */
     boolean isBracker() {
@@ -218,21 +279,30 @@ class Num extends Item {
     Num(String str) {
         this.bigDecimal = new BigDecimal(str);
     }
+
+    public BigDecimal getDecimal() {
+        return super.bigDecimal;
+    }
 }
 
 /**
  * 这个是用来给Operator的临时栈用的
  * 添加一个isPrior方法判断优先级
  * 主要是为了处理Stack为空的情况
+ *
  * @param <E>
  */
 class MyStack<E> extends ArrayDeque<E> {
     public boolean isPrior(Object o) {
         boolean result = false;
         Option item = (Option) o;
-        if (!this.isEmpty() && item.getPriority() > ((Option) (this.peek())).getPriority()) {
+        if (!this.isEmpty() && item.getPriority() >= ((Option) (this.peek())).getPriority()) {
             result = true;
         }
         return result;
+    }
+
+    public boolean isInBracket() {
+        return (!this.isEmpty()) && ((Option) this.peek()).isLeftBracket();
     }
 }
