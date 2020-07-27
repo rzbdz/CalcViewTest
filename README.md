@@ -1,6 +1,4 @@
-
-
-# 一个  Java Swing AWT 计算器
+#  一个  Java Swing AWT 计算器
 
 基于java swing awt 的GUI计算器,为课程作业 (标准/科学,带括号)
 
@@ -33,19 +31,19 @@
 ### 3.1 结构:
 
 - [x] 类和文件层次
-- [ ] Caculation model 类的属性怎么写(怎么表示一个计算对象)
-- [ ] Caculation model 类有什么方法方法
-- [ ] CalcController 属性同上上
-- [ ] CalcController 方法同上上
-- [ ] View 怎么调用Controller的方法
+- [x] 7.26 Caculation model 类的属性怎么写(怎么表示一个计算对象) 
+- [ ] 7.27 Caculation model 类有什么方法方法
+- [ ] 7.27 CalcController 属性同上上
+- [ ] 7.27 CalcController 方法同上上
+- [x] 7.27 View 怎么调用Controller的方法 (updateView updateModel)
 - [ ] Memory 的类属性方法,以及和M按钮之间的绑定
 
 ### 3.2 逻辑代码:
 
 - [x] 中缀表达式转后缀表达式的试验函数(堆栈结构)
-- [ ] 怎么用Caculation类表示一个中缀表达式(类的属性)
-- [ ] CalcController的过滤输入
-- [ ] Calculation的计算成员方法
+- [x] 7.26 怎么用Caculation类表示一个中缀表达式(类的属性)
+- [x] CalcController的过滤输入
+- [x] 7.27 Calculation的计算成员方法
 
 
 ### 3.3 GUI:
@@ -54,24 +52,27 @@
 - [ ] Memory Frame 内容
 - [ ] History Frame 内容
 - [ ] GUI响应事件
-  - [ ] 文本框自适应
+  - [x] 文本框自适应
   - [ ] 菜单栏
     - [x] 内存
     - [ ] 历史
     - [ ] 帮助
   - [ ] 文本框
-  	- [ ] 复制
+  	- [x] 复制
   	- [ ] 粘贴
   	- [x] 全选
-  	- [ ] 复制等式
+  	- [x] 复制等式
   - [ ] 与Controller 和View 连接的事件
     - [ ] M button 
-    - [ ] 按键监听过滤
-    - [ ] 按键监听处理
-    - [ ] 退格键
-    - [ ] CE
-    - [ ] C
+    - [ ] 键盘按键监听过滤
+    - [ ] 键盘按键监听处理
+    - [x] 退格键
+    - [x] CE
+    - [x] C
     - [ ] 其他按键绑定
+    - [ ] 一元计算按键
+    - [ ] 二元计算按键
+    - [ ] 括号等功能键
 
 
 
