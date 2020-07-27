@@ -59,6 +59,7 @@ class NumberPad extends JPanel {
             JButton jb = (JButton) (e.getSource());
             String text = "you pressed" + jb.getText();
             System.out.println(text);
+            TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
 //            if(jb.getText().equals(NumberPad.TURN_POSITIVE_OR_NEGATIVE)){
 //                if(CalculatorWindow.resultTextField.getText().charAt(0)=='-'){
 //                    CalculatorWindow.resultTextField.setText(CalculatorWindow.resultTextField.getText().substring(1, CalculatorWindow.resultTextField.getText().length()));

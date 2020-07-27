@@ -1,7 +1,6 @@
 package view;
 
 import controller.CalcController;
-import org.w3c.dom.Text;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,9 +19,9 @@ class OperationPad extends JPanel {
     public static final String MOD = "%";
     public static final String DIVIDES = "÷";
     public static final String TIMES = "×";
-    public static final String PLUS = "＋";
-    public static final String MINUS = "－";
-    public static final String EQUALS = "＝";
+    public static final String PLUS = "+";
+    public static final String MINUS = "-";
+    public static final String EQUALS = "=";
     static String[] FButtonStrings = {BACKSPACE, MOD, DIVIDES, TIMES, MINUS, PLUS, EQUALS};
     private static OperationPad basicOperationPad;
 
@@ -74,11 +73,13 @@ class OperationPad extends JPanel {
                 TextHeader.setResultText(new BigDecimal(text));
             } else if (jb.getText().equals(OperationPad.EQUALS)) {
                 CalcController c = CalcController.getInstance();
-                TextHeader.setExpressionText(c.getExpression()+c.getOperator());
-                TextHeader.setResultText(c.getResult());
+                c.updateModel(TextHeader.getExpressionText());
+                TextHeader.setExpressionText(TextHeader.getExpressionText()+'=');
+                TextHeader.setResultText(c.updateView());
             } else {
                 text = "you pressed99999999999999 " + jb.getText();
                 System.out.println(text);
+                TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
             }
         }
     }

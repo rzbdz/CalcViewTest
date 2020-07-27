@@ -41,7 +41,7 @@ public class CalculatorFrame extends JFrame {
     //构造函数
     private CalculatorFrame() {
         super("标准计算器");
-
+        setIconImage(Toolkit.getDefaultToolkit().getImage(CalculatorFrame.class.getResource("../res/icon.png")));
         //设置JFrame属性
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(windowMinWidth, windowMinHeight));
@@ -57,7 +57,6 @@ public class CalculatorFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu memory = new JMenu("内存");
         JMenuItem readMemory = new JMenuItem("读取内存");
-
         JMenuItem viewMemory = new JMenuItem("查看记录");
         viewMemory.addActionListener(e -> {
             if (e.getSource() == viewMemory) {
@@ -76,7 +75,23 @@ public class CalculatorFrame extends JFrame {
         JMenuItem viewHistory = history.add(new JMenuItem("查看记录"));
         JMenu help = new JMenu("帮助");
         help.add(new JMenuItem("使用方法"));
-        help.add(new JMenuItem("关于"));
+        JMenuItem about = new JMenuItem("关于");
+        about.addActionListener(e -> {
+            if(e.getSource()==about){
+                JFrame aboutFrame = new JFrame("about");
+                aboutFrame.setLayout(new FlowLayout());
+                aboutFrame.add(new TextField("计算器 v0.1"));
+                JLabel icon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().
+                        getImage(CalculatorFrame.class.getResource("../res/icon.png")).
+                        getScaledInstance(40,40,Image.SCALE_DEFAULT)));
+                aboutFrame.add(icon);
+                aboutFrame.setSize(400,400);
+                aboutFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                aboutFrame.setLocation(this.getX(),this.getY());
+                aboutFrame.setVisible(true);
+            }
+        });
+        help.add(about);
         JSeparator jSeparator = new JSeparator(JSeparator.HORIZONTAL);
         jSeparator.setBackground(Color.WHITE);
         jSeparator.setForeground(Color.WHITE);
@@ -159,7 +174,7 @@ public class CalculatorFrame extends JFrame {
         add(numberPad);
         add(basicOperationPad);
         this.setVisible(true);
-        textHeader.setResultText(textHeader.getResultTextDecimal());
+        TextHeader.setResultText(TextHeader.getResultTextDecimal());
     }
 
     private static class ResizeListener extends ComponentAdapter {

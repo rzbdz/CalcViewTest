@@ -17,6 +17,7 @@ class TextHeader extends JPanel {
 
     private volatile static TextHeader header;
     private static BigDecimal decimal = new BigDecimal("999999999999");
+
     public static TextHeader getInstance() {
         if (header == null) {
             synchronized (TextHeader.class) {
@@ -50,7 +51,10 @@ class TextHeader extends JPanel {
     }
 
     public static String getExpressionText() {
-        return TextHeader.getInstance().expressionTextField.getText();
+        String str = TextHeader.getInstance().expressionTextField.getText();
+        if (str.length()>0&&str.charAt(str.length() - 1) == '=') return str.substring(0, str.length() - 1);
+        else
+            return TextHeader.getInstance().expressionTextField.getText();
     }
 
 

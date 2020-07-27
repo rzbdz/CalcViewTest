@@ -81,8 +81,10 @@ class FunctionPad extends JPanel {
             String text = "you pressed" + jb.getText();
             System.out.println(text);
             if (jb.getText().equals(FunctionPad.CE)) {
+                //CE
                 TextHeader.setResultText(new BigDecimal("0"));
             } else if (jb.getText().equals(FunctionPad.C)) {
+                //C
                 TextHeader.setResultText(new BigDecimal("0"));
                 TextHeader.setExpressionText("");
             }
