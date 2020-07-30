@@ -5,6 +5,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 
+import static java.lang.Thread.sleep;
+
 
 /**
  * 程序中计算器主界面窗口(extends JFrame)<br>
@@ -25,7 +27,6 @@ import java.awt.event.*;
  * <p>成员静态类,用于监听窗口大小改变的事件</p>
  * <p>禁止小于窗口最小大小</p>
  * <p>防止用户乱拉窗口大小</p>
- *
  */
 public class CalculatorFrame extends JFrame {
 
@@ -33,18 +34,21 @@ public class CalculatorFrame extends JFrame {
      * 单例模式实例成员
      * 用了DCL
      */
-    static volatile private CalculatorFrame instance;
+    private static volatile  CalculatorFrame instance;
 
     /**
      * 单例模式获取实例成员对象的方法
+     *
      * @return 返回一个计算器窗口的实例
      */
     public static CalculatorFrame getInstance() {
-        if (instance == null)
+        if (instance == null) {
             synchronized (CalculatorFrame.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new CalculatorFrame();
+                }
             }
+        }
         return instance;
     }
 
@@ -59,30 +63,35 @@ public class CalculatorFrame extends JFrame {
 
     /**
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see TextHeader
      */
     private TextHeader textHeader;
     /**
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see MemoryButtonBar
      */
     private MemoryButtonBar menuButtonBar;
     /**
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see FunctionPad
      */
     private FunctionPad functionPad;
     /**
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see FunctionPad
      */
     private NumberPad numberPad;
     /**
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see FunctionPad
      */
@@ -91,6 +100,7 @@ public class CalculatorFrame extends JFrame {
     /**
      * 链接一个内存窗口(程序顶部的内存工具栏)
      * 私有成员
+     *
      * @see CalculatorFrame
      * @see MemoryToolFrame
      */
@@ -146,17 +156,17 @@ public class CalculatorFrame extends JFrame {
         help.add(new JMenuItem("使用方法"));
         JMenuItem about = new JMenuItem("关于");
         about.addActionListener(e -> {
-            if(e.getSource()==about){
+            if (e.getSource() == about) {
                 JFrame aboutFrame = new JFrame("about");
                 aboutFrame.setLayout(new FlowLayout());
-                aboutFrame.add(new TextField("计算器 v0.1"));
+                aboutFrame.add(new TextField("计算器 v0.1@pjz,wyx"));
                 JLabel icon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().
                         getImage(CalculatorFrame.class.getResource("../res/icon.png")).
-                        getScaledInstance(40,40,Image.SCALE_DEFAULT)));
+                        getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
                 aboutFrame.add(icon);
-                aboutFrame.setSize(400,400);
+                aboutFrame.setSize(400, 400);
                 aboutFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                aboutFrame.setLocation(this.getX(),this.getY());
+                aboutFrame.setLocation(this.getX(), this.getY());
                 aboutFrame.setVisible(true);
             }
         });
@@ -259,8 +269,19 @@ public class CalculatorFrame extends JFrame {
             if (d.height < CalculatorFrame.windowMinHeight || d.width < CalculatorFrame.windowMinWidth) {
                 ((JFrame) (e.getComponent())).setResizable(false);
                 (e.getComponent()).setSize(CalculatorFrame.windowMinWidth, CalculatorFrame.windowMinHeight);
+                try {
+                    sleep(50);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 ((JFrame) (e.getComponent())).setResizable(true);
+                try {
+                    sleep(50);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
             }
+            TextHeader.getInstance().UpdateResultTextFontSize(TextHeader.getResultText());
         }
 
         @Override
