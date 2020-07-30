@@ -71,7 +71,7 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
 
     private MemoryButtonBar() {
         this.buttonClickHandler = new MButtonClickHandler();
-        setLayout(new GridLayout(1, 5));
+        setLayout(new GridLayout(1, 5,1,1));
         this.add(MCButton = new MButton(MButtonStrings[0], buttonClickHandler));
         this.add(MRButton = new MButton(MButtonStrings[1], buttonClickHandler));
         this.add(MPlusButton = new MButton(MButtonStrings[2], buttonClickHandler));

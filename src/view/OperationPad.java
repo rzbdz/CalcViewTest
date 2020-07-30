@@ -39,7 +39,7 @@ class OperationPad extends JPanel implements CanTurnErrorState {
 
     private OperationPad() {
         this.buttonClickHandler = new BasicOperationButtonClickHandler();
-        setLayout(new GridLayout(7, 1));
+        setLayout(new GridLayout(7, 1,1,1));
         for (String s : FButtonStrings) {
             add(new BasicOperationButton(s, buttonClickHandler));
         }

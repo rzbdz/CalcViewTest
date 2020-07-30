@@ -1,16 +1,19 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 
 import static java.lang.Thread.sleep;
 
 
 /**
  * 程序中计算器主界面窗口(extends JFrame)<br>
- * 使用GridBagLayout作为布局<br>
+ * //不再使用GridBagLayout作为布局<br>
+ * //由于gbl的weight是分配extra空间,导致无法符合要的效果,改为null layout
  * 通过调用{@code getInstance()}方法获取一个窗口的实例,<br>
  * 窗口会自动完成界面组件的创建和显示,将会获取另外的几个组件的实例并显示:<br>
  * 具有以下几个JPanel组件:<br>
@@ -172,7 +175,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
                 aboutFrame.add(new JTextArea(" * ****开源组件声明:***********************************\n" +
                         " * ****(1)com.formdev.flatlaf(Apache-2.0 License)*****\n" +
                         " * **************https://www.formdev.com/flatlaf/*****\n" +
-                        " * ***************************************************\n"+
+                        " * ***************************************************\n" +
                         "更新日志:\n0.1.1支持主题和异常处理\n0.1.0支持加减乘除和括号"));
                 aboutFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 aboutFrame.setLocation(this.getX(), this.getY());
@@ -207,11 +210,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
                 Theme.setSystemLooksAndFeels(CalculatorFrame.getInstance());
             }
         });
-        JSeparator jSeparator = new JSeparator(JSeparator.HORIZONTAL);
-        //jSeparator.setOpaque(true);
-        jSeparator.setForeground(jMenuBar.getForeground());
-        jSeparator.setForeground(jMenuBar.getBackground());
-        jSeparator.setBorder(new EmptyBorder(0, 0, 0, 0));
+        //JSeparator jSeparator = new JSeparator(JSeparator.HORIZONTAL);
         JRadioButton jRadioButton = new JRadioButton("置顶");
         jRadioButton.addActionListener(e -> {
             this.setAlwaysOnTop(((JRadioButton) (e.getSource())).isSelected());
@@ -223,7 +222,8 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         jMenuBar.add(history);
         jMenuBar.add(theme);
         jMenuBar.add(help);
-        jMenuBar.add(jSeparator);
+        //jMenuBar.add(jSeparator);
+        jMenuBar.add(Box.createHorizontalGlue());
         jMenuBar.add(jRadioButton);
         setJMenuBar(jMenuBar);
         //定义计算器窗口内组件
@@ -232,70 +232,43 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         functionPad = FunctionPad.getInstance();
         numberPad = NumberPad.getInstance();
         basicOperationPad = OperationPad.getInstance();
-        //定义Layout
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        //设置layout
-        this.setLayout(gridBagLayout);
-        //这个是用来搞GridBag 属性布局的
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        //设置header的GridBag属性
-        //下面全是布局信息,尽量不要改
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1;
-        gridBagConstraints.weighty = 0.25;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
-        gridBagConstraints.gridheight = 5;
-        gridBagLayout.setConstraints(textHeader, gridBagConstraints);
-        //设置计算器M Button Menu Bar 的GridBag属性
-        //下面全是布局信息,尽量不要改
-        gridBagConstraints.weightx = 1;
-        gridBagConstraints.weighty = 0.05;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
-        gridBagConstraints.gridheight = 1;
-        gridBagLayout.setConstraints(menuButtonBar, gridBagConstraints);
-        //设置功能键的GridBag属性
-        //下面全是布局信息,尽量不要改
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.3;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 14;
-        gridBagConstraints.gridheight = 6;
-        gridBagLayout.setConstraints(functionPad, gridBagConstraints);
-        //设置Number Pad的GridBag属性
-        //下面全是布局信息,尽量不要改
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.4;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.gridwidth = 14;
-        gridBagConstraints.gridheight = 8;
-        gridBagLayout.setConstraints(numberPad, gridBagConstraints);
-        //设置Basic Operation Button的GridBag属性
-        //下面全是布局信息,尽量不要改
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.7;
-        gridBagConstraints.gridx = 15;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 6;
-        gridBagConstraints.gridheight = 14;
-        gridBagLayout.setConstraints(basicOperationPad, gridBagConstraints);
+        setLayout(null);
         //究极 add
         add(textHeader);
         add(menuButtonBar);
         add(functionPad);
         add(numberPad);
         add(basicOperationPad);
+        //null layout的设置部分
         this.setVisible(true);
+        System.out.println(getContentPane().getHeight());
+        System.out.println(getContentPane().getWidth());
+        System.out.println(windowMinHeight);
+        System.out.println(windowMinWidth);
+        setComponentsNullLayoutBounds(0, getContentPane().getHeight(), getContentPane().getWidth());
         TextHeader.setResultText(TextHeader.getResultTextDecimal());
         /**
          * 最后的一些初始化工作
          */
         darkTheme.setSelected(true);
+    }
+
+    public void setComponentsNullLayoutBounds(int offsetHeight, int windowHeight, int windowWidth) {
+        windowWidth -= 4;
+        textHeader.setBounds(2, offsetHeight, windowWidth, (int) (0.25D * (double) windowHeight));
+        menuButtonBar.setBounds(1, textHeader.getY() + textHeader.getHeight(),
+                windowWidth, (int) (0.05D * (double) windowHeight));
+        functionPad.setBounds(2, menuButtonBar.getY() + menuButtonBar.getHeight()+1,
+                (int) (0.75D * (double) windowWidth), (int) (0.3D * (double) windowHeight)-1);
+        numberPad.setBounds(2, functionPad.getY() + functionPad.getHeight(),
+                functionPad.getWidth(), (int) (0.4D * (double) windowHeight));
+        basicOperationPad.setBounds(numberPad.getX() + numberPad.getWidth(), menuButtonBar.getY() + menuButtonBar.getHeight(),
+                (int) (0.25D * (double) windowWidth), (int) (0.7D * (double) windowHeight));
+        if (instance != null){
+            getInstance().repaint();
+            SwingUtilities.updateComponentTreeUI(instance);
+        }
+
     }
 
     @Override
@@ -320,17 +293,20 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
                 ((JFrame) (e.getComponent())).setResizable(false);
                 (e.getComponent()).setSize(CalculatorFrame.windowMinWidth, CalculatorFrame.windowMinHeight);
                 try {
-                    sleep(50);
+                    sleep(100);
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
                 ((JFrame) (e.getComponent())).setResizable(true);
                 try {
-                    sleep(50);
+                    sleep(100);
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
             }
+            CalculatorFrame.getInstance().
+                    setComponentsNullLayoutBounds(0,
+                            CalculatorFrame.getInstance().getContentPane().getHeight(), ((JFrame) (e.getComponent())).getContentPane().getWidth());
             TextHeader.getInstance().UpdateResultTextFontSize(TextHeader.getResultText());
         }
 

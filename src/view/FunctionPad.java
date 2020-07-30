@@ -46,7 +46,7 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
 
     private FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
-        setLayout(new GridLayout(3, 3));
+        setLayout(new GridLayout(3, 3,1,1));
         add(new FunctionButton(ONE_DIVIDES_X, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
         //普通字,使用默认字体
         for (String s : FButtonStrings) {

@@ -30,7 +30,7 @@ class NumberPad extends JPanel implements CanTurnErrorState{
     }
     private NumberPad() {
         buttonClickHandler = new NumberButtonClickHandler();
-        setLayout(new GridLayout(4, 3));
+        setLayout(new GridLayout(4, 3,1,1));
         for (int i = 7; i >= 1; i -= 3) {
             for (int j = i; j < i + 3; j++)
                 add(new NumberButton(String.valueOf(j), buttonClickHandler));
