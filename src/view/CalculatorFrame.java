@@ -34,7 +34,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
      * 单例模式实例成员
      * 用了DCL
      */
-    private static volatile  CalculatorFrame instance;
+    private static volatile CalculatorFrame instance;
 
     /**
      * 单例模式获取实例成员对象的方法
@@ -55,11 +55,11 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
     /**
      * 定义窗口的最小宽度,也是窗口初始化时的窗口宽度
      */
-    static int windowMinWidth = 340;
+    static int windowMinWidth = 344;
     /**
      * 定义窗口的最小高度,也是窗口初始化时的窗口高度
      */
-    static int windowMinHeight = 500;
+    static int windowMinHeight = 504;
 
     /**
      * 私有成员
@@ -114,7 +114,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
      * 获取单例实例
      */
     private CalculatorFrame() {
-        super("标准计算器");
+        super("计算器");
         setIconImage(new ImageIcon("src/res/icon.png").getImage());
         //设置JFrame属性
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -157,33 +157,71 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         JMenuItem about = new JMenuItem("关于");
         about.addActionListener(e -> {
             if (e.getSource() == about) {
-                JFrame aboutFrame = new JFrame("about");
+                JFrame aboutFrame = new JFrame("关于这个计算器");
                 aboutFrame.setLayout(new FlowLayout());
-                aboutFrame.add(new TextField("计算器 v0.1@pjz,wyx"));
+                JTextField comp = new JTextField("半标准半科学计算器 v0.1.1@pjz,wyx");
+                comp.setEditable(false);
+                comp.setBackground(jMenuBar.getBackground());
+                comp.setForeground(readHistory.getForeground());
+                aboutFrame.add(comp);
                 JLabel icon = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().
                         getImage(CalculatorFrame.class.getResource("../res/icon.png")).
                         getScaledInstance(40, 40, Image.SCALE_DEFAULT)));
                 aboutFrame.add(icon);
                 aboutFrame.setSize(400, 400);
+                aboutFrame.add(new JTextArea(" * ****开源组件声明:***********************************\n" +
+                        " * ****(1)com.formdev.flatlaf(Apache-2.0 License)*****\n" +
+                        " * **************https://www.formdev.com/flatlaf/*****\n" +
+                        " * ***************************************************\n"+
+                        "更新日志:\n0.1.1支持主题和异常处理\n0.1.0支持加减乘除和括号"));
                 aboutFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 aboutFrame.setLocation(this.getX(), this.getY());
+                aboutFrame.setIconImage(new ImageIcon("src/res/icon.png").getImage());
                 aboutFrame.setVisible(true);
             }
         });
         help.add(about);
+        JMenu theme = new JMenu("主题");
+        ButtonGroup themeBtnGroup = new ButtonGroup();
+        JMenuItem darkTheme = new JRadioButtonMenuItem("暗黑主题");
+        JMenuItem lightTheme = new JRadioButtonMenuItem("光明主题");
+        JMenuItem systemTheme = new JRadioButtonMenuItem("系统主题");
+        themeBtnGroup.add(darkTheme);
+        themeBtnGroup.add(lightTheme);
+        themeBtnGroup.add(systemTheme);
+        theme.add(darkTheme);
+        theme.add(lightTheme);
+        theme.add(systemTheme);
+        darkTheme.addActionListener(e -> {
+            if (((JRadioButtonMenuItem) e.getSource()).isSelected()) {
+                Theme.setDarkLooksAndFeels(CalculatorFrame.getInstance());
+            }
+        });
+        lightTheme.addActionListener(e -> {
+            if (((JRadioButtonMenuItem) e.getSource()).isSelected()) {
+                Theme.setLightLooksAndFeels(CalculatorFrame.getInstance());
+            }
+        });
+        systemTheme.addActionListener(e -> {
+            if (((JRadioButtonMenuItem) e.getSource()).isSelected()) {
+                Theme.setSystemLooksAndFeels(CalculatorFrame.getInstance());
+            }
+        });
         JSeparator jSeparator = new JSeparator(JSeparator.HORIZONTAL);
-        jSeparator.setBackground(Color.WHITE);
-        jSeparator.setForeground(Color.WHITE);
+        //jSeparator.setOpaque(true);
+        jSeparator.setForeground(jMenuBar.getForeground());
+        jSeparator.setForeground(jMenuBar.getBackground());
         jSeparator.setBorder(new EmptyBorder(0, 0, 0, 0));
         JRadioButton jRadioButton = new JRadioButton("置顶");
         jRadioButton.addActionListener(e -> {
             this.setAlwaysOnTop(((JRadioButton) (e.getSource())).isSelected());
         });
         jRadioButton.setFont(new BasicFont(Font.PLAIN, memory.getFont().getSize()));
-        jRadioButton.setBackground(Color.WHITE);
+        jRadioButton.setBackground(jMenuBar.getBackground());
         jRadioButton.setFocusPainted(false);
         jMenuBar.add(memory);
         jMenuBar.add(history);
+        jMenuBar.add(theme);
         jMenuBar.add(help);
         jMenuBar.add(jSeparator);
         jMenuBar.add(jRadioButton);
@@ -254,6 +292,10 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         add(basicOperationPad);
         this.setVisible(true);
         TextHeader.setResultText(TextHeader.getResultTextDecimal());
+        /**
+         * 最后的一些初始化工作
+         */
+        darkTheme.setSelected(true);
     }
 
     @Override
