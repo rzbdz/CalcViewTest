@@ -111,7 +111,7 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
      * 需要重写方法:
      * public void actionPerformed(ActionEvent e);
      */
-    private static class FunctionButtonClickHandler extends ButtonClickHandler {
+    private static class FunctionButtonClickHandler extends ButtonClickHandler implements CanTurnErrorState{
 
         FunctionButtonClickHandler() {
             super();
@@ -130,9 +130,14 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
                 //C
                 TextHeader.setResultText(new BigDecimal("0"));
                 TextHeader.setExpressionText("");
-                FunctionPad.getInstance().setErrorState(false);
+                CalculatorFrame.getInstance().setErrorState(false);
             } else if (jb.getText().equals(FunctionPad.LEFT_BRACKET)) {
             }
+        }
+
+        @Override
+        public void setErrorState(boolean bool) {
+
         }
     }
 }

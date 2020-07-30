@@ -1,5 +1,7 @@
 package view;
 
+import controller.CalcController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,13 +43,14 @@ class NumberPad extends JPanel implements CanTurnErrorState{
         add(new NumberButton(".", buttonClickHandler));
     }
 
+    @Override
     public void setErrorState(boolean bool) {
         for (Component co : this.getComponents()) {
             if (co instanceof NumberButton) {
-                if (((NumberButton) co).getText().contains(TURN_POSITIVE_OR_NEGATIVE) || ((NumberButton) co).getText().contains(DOT)) {
+                if (((NumberButton) co).getText().contains(DOT)) {
                 } else co.setEnabled(!bool);
             }
-            System.out.println(co.getClass().toString());  //得到co的类型
+            //System.out.println(co.getClass().toString());  //得到co的类型
 
         }
     }
@@ -76,6 +79,7 @@ class NumberPad extends JPanel implements CanTurnErrorState{
             JButton jb = (JButton) (e.getSource());
             String text = "you pressed" + jb.getText();
             System.out.println(text);
+            CalculatorFrame.getInstance().setErrorState(false);
             TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
 
         }

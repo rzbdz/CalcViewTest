@@ -18,7 +18,7 @@ import java.math.BigDecimal;
  * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了
  * {@link BasicOperationButtonClickHandler}
  */
-class OperationPad extends JPanel {
+class OperationPad extends JPanel implements CanTurnErrorState {
     ButtonClickHandler buttonClickHandler;
     public static final String BACKSPACE = "←";
     public static final String MOD = "%";
@@ -43,6 +43,11 @@ class OperationPad extends JPanel {
         for (String s : FButtonStrings) {
             add(new BasicOperationButton(s, buttonClickHandler));
         }
+    }
+
+    @Override
+    public void setErrorState(boolean bool) {
+
     }
 
     private static class BasicOperationButton extends JButton {
@@ -77,10 +82,18 @@ class OperationPad extends JPanel {
                 }
                 TextHeader.setResultText(new BigDecimal(text));
             } else if (jb.getText().equals(OperationPad.EQUALS)) {
-                CalcController c = CalcController.getInstance();
-                c.updateModel(TextHeader.getExpressionText());
-                TextHeader.setExpressionText(TextHeader.getExpressionText()+'=');
-                TextHeader.setResultText(c.updateView());
+                if(TextHeader.getExpressionText()!=null&&! TextHeader.getExpressionText().equals("")){
+                    CalcController c = CalcController.getInstance();
+                    try{
+                        c.updateModel(TextHeader.getExpressionText());
+                        TextHeader.setExpressionText(TextHeader.getExpressionText()+'=');
+                        TextHeader.setResultText(c.updateView());
+                    }catch (Exception controllerException){
+                        TextHeader.setResultText(controllerException.getMessage());
+                        CalculatorFrame.getInstance().setErrorState(true);
+                    }
+                }
+
             } else {
                 text = "you pressed99999999999999 " + jb.getText();
                 System.out.println(text);

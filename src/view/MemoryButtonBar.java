@@ -31,7 +31,7 @@ import java.awt.event.ActionEvent;
  *  这里可以考虑只搞一个Memory,那就写一个static的BigDecimal变量就好了
  *
  */
-class MemoryButtonBar extends JPanel {
+class MemoryButtonBar extends JPanel implements CanTurnErrorState{
     /**
      * 这个是事件监听的实例,不用管她
      */
@@ -79,6 +79,11 @@ class MemoryButtonBar extends JPanel {
         this.add(MSaveButton = new MButton(MButtonStrings[4], buttonClickHandler));
         this.MCButton.setEnabled(false);
         this.MRButton.setEnabled(false);
+    }
+
+    @Override
+    public void setErrorState(boolean bool) {
+
     }
 
     private class MButton extends JButton {

@@ -16,7 +16,7 @@ package view;
 public interface CanTurnErrorState {
     /**
      * 设置UI组件进入错误状态
-     * @param bool true则不是错误state
+     * @param bool true则错误state
      */
     public void setErrorState(boolean bool);
 }

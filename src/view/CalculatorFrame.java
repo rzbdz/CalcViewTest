@@ -28,7 +28,7 @@ import static java.lang.Thread.sleep;
  * <p>禁止小于窗口最小大小</p>
  * <p>防止用户乱拉窗口大小</p>
  */
-public class CalculatorFrame extends JFrame {
+public class CalculatorFrame extends JFrame implements CanTurnErrorState {
 
     /**
      * 单例模式实例成员
@@ -254,6 +254,14 @@ public class CalculatorFrame extends JFrame {
         add(basicOperationPad);
         this.setVisible(true);
         TextHeader.setResultText(TextHeader.getResultTextDecimal());
+    }
+
+    @Override
+    public void setErrorState(boolean bool) {
+        basicOperationPad.setErrorState(bool);
+        functionPad.setErrorState(bool);
+        numberPad.setErrorState(bool);
+        menuButtonBar.setErrorState(bool);
     }
 
     /**
