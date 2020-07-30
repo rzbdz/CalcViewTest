@@ -23,6 +23,12 @@ public class CalculationTest {
         Assert.assertTrue(generateExpressionsAndTest(arr,c,100));
     }
 
+    @Test
+    public void testSingle(){
+        CalcController c = CalcController.getInstance();
+        c.updateModel("9");
+    }
+
     private static boolean generateExpressionsAndTest(char[] operatorsArray, CalcController controller, int howManyTimes) {
         boolean returnBooleanValue = true;
         Random random = new Random(Calendar.getInstance().getTimeInMillis());

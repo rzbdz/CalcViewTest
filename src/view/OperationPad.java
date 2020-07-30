@@ -39,7 +39,7 @@ class OperationPad extends JPanel implements CanTurnErrorState {
 
     private OperationPad() {
         this.buttonClickHandler = new BasicOperationButtonClickHandler();
-        setLayout(new GridLayout(7, 1,1,1));
+        setLayout(new GridLayout(7, 1, 1, 1));
         for (String s : FButtonStrings) {
             add(new BasicOperationButton(s, buttonClickHandler));
         }
@@ -78,17 +78,17 @@ class OperationPad extends JPanel implements CanTurnErrorState {
                     text = "0";
                 } else {
                     var d = TextHeader.getResultTextDecimal();
-                    text = d.toString().substring(0,d.toString().length()-1);
+                    text = d.toString().substring(0, d.toString().length() - 1);
                 }
                 TextHeader.setResultText(new BigDecimal(text));
             } else if (jb.getText().equals(OperationPad.EQUALS)) {
-                if(TextHeader.getExpressionText()!=null&&! TextHeader.getExpressionText().equals("")){
+                if (TextHeader.getExpressionText() != null && !TextHeader.getExpressionText().equals("")) {
                     CalcController c = CalcController.getInstance();
-                    try{
+                    try {
                         c.updateModel(TextHeader.getExpressionText());
-                        TextHeader.setExpressionText(TextHeader.getExpressionText()+'=');
+                        TextHeader.setExpressionText(TextHeader.getExpressionText() + TextHeader.getResultText().replace(",","")+ '=');
                         TextHeader.setResultText(c.updateView());
-                    }catch (Exception controllerException){
+                    } catch (Exception controllerException) {
                         TextHeader.setResultText(controllerException.getMessage());
                         CalculatorFrame.getInstance().setErrorState(true);
                     }
@@ -97,7 +97,21 @@ class OperationPad extends JPanel implements CanTurnErrorState {
             } else {
                 text = "you pressed99999999999999 " + jb.getText();
                 System.out.println(text);
-                TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
+                //TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
+                try {
+                    CalcController c = CalcController.getInstance();
+                    System.out.println("fuck e"+TextHeader.getExpressionText());
+                    System.out.println("fuck r"+TextHeader.getResultText());
+                    System.out.println("fuckjb"+jb.getText());
+                    c.updateModel(TextHeader.getExpressionText()+TextHeader.getResultText());
+                    System.out.println("fuck vie"+c.updateView());
+                    TextHeader.setExpressionText(TextHeader.getExpressionText()+TextHeader.getResultText() + jb.getText());
+                    TextHeader.setResultText(c.updateView());
+                } catch (Exception controllerException) {
+                    System.err.println(controllerException.getMessage());
+                    TextHeader.setResultText(controllerException.getMessage());
+                    CalculatorFrame.getInstance().setErrorState(true);
+                }
             }
         }
     }

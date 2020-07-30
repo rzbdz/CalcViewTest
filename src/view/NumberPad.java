@@ -5,6 +5,7 @@ import controller.CalcController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
 
 /**
  * 这里只有 0-9 , +/- , . 按键,具体描述在下面<br>
@@ -80,7 +81,10 @@ class NumberPad extends JPanel implements CanTurnErrorState{
             String text = "you pressed" + jb.getText();
             System.out.println(text);
             CalculatorFrame.getInstance().setErrorState(false);
-            TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
+            if (TextHeader.getResultText().equals("0")) {
+                TextHeader.setResultText(new BigDecimal(jb.getText()));
+            } else
+                TextHeader.setResultText(new BigDecimal(TextHeader.getResultText() + jb.getText()));
 
         }
     }

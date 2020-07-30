@@ -1,6 +1,8 @@
 
 package view;
 
+import jdk.dynalink.Operation;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -48,8 +50,9 @@ import java.text.DecimalFormat;
  * (1)响应更改text时事件的自动调节文本大小(通过测量gui的宽度和每个单字在相应字体中的宽度之和来进行调节,保持美观)
  * </p><p>
  * (2)响应右键弹出菜单事件(右键复制粘贴全选复制等式). </p>
- *
+ * <p>
  * MVC的资讯查看controller:
+ *
  * @see controller.Controller
  * @see controller.CalcController
  * @see CalculatorFrame
@@ -77,6 +80,7 @@ class TextHeader extends JPanel {
     /**
      * 通过指定text来设置结果文本框
      * 已过时,debug可用
+     *
      * @param text 直接设置text的text
      */
     @Deprecated
@@ -86,6 +90,7 @@ class TextHeader extends JPanel {
 
     /**
      * 根据格式设置ResultText
+     *
      * @param bigDecimal 要格式化输出的参数
      */
     public static void setResultText(BigDecimal bigDecimal) {
@@ -95,6 +100,7 @@ class TextHeader extends JPanel {
 
     /**
      * 设置表达式,这里就没有格式化了,直接set
+     *
      * @param text 要设置的表达式
      */
     public static void setExpressionText(String text) {
@@ -103,6 +109,7 @@ class TextHeader extends JPanel {
 
     /**
      * 获取ResultText(注意是String)
+     *
      * @return String
      */
     public static String getResultText() {
@@ -111,21 +118,41 @@ class TextHeader extends JPanel {
 
     /**
      * 获取Decimal,这个比较常用
-     * @return 可能可以把这个decimal认为是一个ViewModel,视图自己的数据模型
+     *
+     * @return 可能可以把这个decimal认为是一个ViewModel, 视图自己的数据模型
      */
     public static BigDecimal getResultTextDecimal() {
         return TextHeader.decimal;
     }
 
     /**
-     * 获取expression,这里的写法是,如果有等号,将会删除等号.
-     * @return 返回一个expression String,无等号
+     * 获取expression,这里的写法是,如果有等号,将会删除符號.
+     *
+     * @return 返回一个expression String,无末尾符號
      */
     public static String getExpressionText() {
         String str = TextHeader.getInstance().expressionTextField.getText();
         if (str.length() > 0 && str.charAt(str.length() - 1) == '=') return str.substring(0, str.length() - 1);
         else
             return TextHeader.getInstance().expressionTextField.getText();
+    }
+
+    /**
+     * 获取expression,这里的写法是,如果有等号,将会删除等号.
+     *
+     * @return 返回一个expression String,无末尾等號
+     */
+    public static String getExpressionTextWithoutLast() {
+        String str = TextHeader.getInstance().expressionTextField.getText();
+        boolean symbol = false;
+        String s = str.substring(str.length() - 1);
+        if (s.equals(OperationPad.EQUALS)||s.equals(OperationPad.TIMES)
+                ||s.equals(OperationPad.DIVIDES)||s.equals(OperationPad.PLUS)
+        ||s.equals(OperationPad.MINUS)) {
+            symbol = true;
+        }
+        return symbol? str.substring(0, str.length() - 1):str;
+
     }
 
 
@@ -298,9 +325,9 @@ class TextHeader extends JPanel {
     public void UpdateResultTextFontSize(String content) {
         ChangeFont cf;
         if (!content.equals("")) {
-            int max=56;
+            int max = 56;
             Font font = new BasicFont(Font.BOLD, max);
-            for (int i = max-1; font.getStringBounds(content,
+            for (int i = max - 1; font.getStringBounds(content,
                     new FontRenderContext(new AffineTransform(), true, true)).getWidth()
                     + 40 >= resultTextField.getParent().getSize().width; i--) {
                 font = new BasicFont(Font.BOLD, i);
@@ -314,7 +341,7 @@ class TextHeader extends JPanel {
     }
 
     //为上面的文本监听器服务,稍后执行的Runable接口实现
-    //用来修改resultTextField的文字大小
+//用来修改resultTextField的文字大小
     private class ChangeFont implements Runnable {
         Font ft;
 
