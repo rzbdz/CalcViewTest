@@ -6,10 +6,18 @@ import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 
 /**
- * 这个Function 写的是除了加减乘除等之外的按键
- * 具体见字符串数组
+ * 这个Function 写的是除了加减乘除等之外的按键<br>
+ * 具体见字符串数组<br>
+ * 单例模式说明{@link CalculatorFrame}<br>
+ * <br>
+ * 重要成员是内部类{@code FunctionButtonClickHandler{}},
+ * 负责处理按钮的事件监听.<br>
+ * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了.<br>
+ * 重要成员二是方法{@code setErrorState(boolean)},这个见参考
+ * 实现的接口.<br>
+ * @see CanTurnErrorState
  */
-class FunctionPad extends JPanel {
+class FunctionPad extends JPanel implements CanTurnErrorState {
     ButtonClickHandler buttonClickHandler;
     public static final String X_Y = "xʸ";
     public static final String CE = "CE";
@@ -25,6 +33,11 @@ class FunctionPad extends JPanel {
 
     private static FunctionPad functionPad;
 
+    /**
+     * 单例模式获取实例
+     * @return 返回FunctionPad的一个实例
+     * @see CalculatorFrame
+     */
     public static FunctionPad getInstance() {
         if (functionPad == null)
             functionPad = new FunctionPad();
@@ -45,9 +58,37 @@ class FunctionPad extends JPanel {
         }
         add(new FunctionButton(LEFT_BRACKET, buttonClickHandler));
         add(new FunctionButton(RIGHT_BRACKET, buttonClickHandler));
-        add(new FunctionButton(ABS, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
+        add(new FunctionButton(ABS, buttonClickHandler,
+                new Font("Times New Roman", Font.ITALIC, 16)));
     }
 
+    @Override
+    /**
+     * <b>重要成员</b>
+     * 实现{@link CanTurnErrorState}接口的方法
+     * @see CanTurnErrorState
+     */
+    public void setErrorState(boolean bool) {
+        //获取全部的components
+        for (Component component : this.getComponents()) {
+            //对于是按钮的组件
+            if (component instanceof FunctionButton) {
+                //这里就排除一些不变灰的按钮,让能变灰的都变灰
+                //这里主要是参考windows的标准计算器的样子来搞的
+                if (((FunctionButton) component).getText().contains(C) ||
+                        ((FunctionButton) component).getText().contains(CE)) {
+                } else component.setEnabled(!bool);
+            }
+            //Debug code
+            //System.out.println(component.getClass().toString());
+
+        }
+    }
+
+    /**
+     * 内部样式类,
+     * 主要继承JButton和修改一些样式
+     */
     private static class FunctionButton extends JButton {
         FunctionButton(String text, ButtonClickHandler handler) {
             super(text);
@@ -65,6 +106,7 @@ class FunctionPad extends JPanel {
     }
 
     /**
+     * <b>重要成员</b>
      * 在这里编写功能按钮点击的事件处理
      * 需要重写方法:
      * public void actionPerformed(ActionEvent e);
@@ -83,10 +125,13 @@ class FunctionPad extends JPanel {
             if (jb.getText().equals(FunctionPad.CE)) {
                 //CE
                 TextHeader.setResultText(new BigDecimal("0"));
+                FunctionPad.getInstance().setErrorState(false);
             } else if (jb.getText().equals(FunctionPad.C)) {
                 //C
                 TextHeader.setResultText(new BigDecimal("0"));
                 TextHeader.setExpressionText("");
+                FunctionPad.getInstance().setErrorState(false);
+            } else if (jb.getText().equals(FunctionPad.LEFT_BRACKET)) {
             }
         }
     }

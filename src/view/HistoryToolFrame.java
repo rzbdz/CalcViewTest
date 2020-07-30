@@ -2,6 +2,11 @@ package view;
 
 import javax.swing.*;
 
+/**
+ * 这个是历史记录工具的窗口,
+ * 就是那个程序顶部菜单栏的一个弹出窗口.
+ * 暂时不用考虑这里的编写.
+ */
 public class HistoryToolFrame extends JFrame {
     public static final int minWidth = 400;
     public static final int minHeight = 600;

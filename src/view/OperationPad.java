@@ -8,10 +8,15 @@ import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 
 /**
- * 这里就是普通的退格加减乘除等
- * 值得注意的是:
+ * 这里就是普通的退格加减乘除等<br>
+ * 值得注意的是:<br>
  * 这里用了数学符号,和直接的=+-不一样,
- * 比较时要复制字符串数组的符号,或者改成直接的-=+
+ * 比较时要用常量,常量举例:{@link OperationPad#BACKSPACE},
+ * 单例模式说明{@link CalculatorFrame}<br><br>
+ * 重要成员是内部类{@code BasicOperationButtonClickHandler{}}
+ * 负责处理按钮的事件监听<br>
+ * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了
+ * {@link BasicOperationButtonClickHandler}
  */
 class OperationPad extends JPanel {
     ButtonClickHandler buttonClickHandler;

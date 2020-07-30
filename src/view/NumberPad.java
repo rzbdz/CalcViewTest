@@ -5,9 +5,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * 这里只有 0-9 , +/- , . 按键,具体描述在下面
+ * 这里只有 0-9 , +/- , . 按键,具体描述在下面<br>
+ * 单例模式说明{@link CalculatorFrame}<br>
+ *<br>
+ * 重要成员是内部类{@code NumberButtonClickHandler{}}
+ * 负责处理按钮的事件监听<br>
+ * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了<br>
+ * {@link NumberButtonClickHandler}
+ * @see CanTurnErrorState
  */
-class NumberPad extends JPanel {
+class NumberPad extends JPanel implements CanTurnErrorState{
     ButtonClickHandler buttonClickHandler;
 
     public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
@@ -34,6 +41,16 @@ class NumberPad extends JPanel {
         add(new NumberButton(".", buttonClickHandler));
     }
 
+    public void setErrorState(boolean bool) {
+        for (Component co : this.getComponents()) {
+            if (co instanceof NumberButton) {
+                if (((NumberButton) co).getText().contains(TURN_POSITIVE_OR_NEGATIVE) || ((NumberButton) co).getText().contains(DOT)) {
+                } else co.setEnabled(!bool);
+            }
+            System.out.println(co.getClass().toString());  //得到co的类型
+
+        }
+    }
     /**
      * 内部Button类,定义一些属性,尽量不修改
      */
@@ -60,16 +77,6 @@ class NumberPad extends JPanel {
             String text = "you pressed" + jb.getText();
             System.out.println(text);
             TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
-//            if(jb.getText().equals(NumberPad.TURN_POSITIVE_OR_NEGATIVE)){
-//                if(CalculatorWindow.resultTextField.getText().charAt(0)=='-'){
-//                    CalculatorWindow.resultTextField.setText(CalculatorWindow.resultTextField.getText().substring(1, CalculatorWindow.resultTextField.getText().length()));
-//                }else{
-//                    CalculatorWindow.resultTextField.setText("-"+ CalculatorWindow.resultTextField.getText());
-//                }
-//
-//            }else{
-//                CalculatorWindow.resultTextField.setText(CalculatorWindow.resultTextField.getText()+jb.getText());
-//            }
 
         }
     }
