@@ -253,19 +253,7 @@ class TextHeader extends JPanel {
                 //这里是用来暴力计算结果文本框的字符串对应字体长度从而改变字号的
                 //使用Font的getStringBounds的getWidth计算,避免人工暴力设定值,
                 //考虑小数点,逗号,符号,数字的宽度不同
-                if (!content.equals("")) {
-                    Font font = new BasicFont(Font.BOLD, 48);
-                    for (int i = 36; font.getStringBounds(content,
-                            new FontRenderContext(new AffineTransform(), true, true)).getWidth()
-                            + 40 >= resultTextField.getParent().getSize().width; i--) {
-                        font = new BasicFont(Font.BOLD, i);
-                    }
-                    cf = new ChangeFont(font);
-                    //稍后执行changeFont操作
-                    //这里这样调用是因为使用JTextField进入了Document部分,
-                    //JTextField被加锁
-                    EventQueue.invokeLater(cf);
-                }
+                UpdateResultTextFontSize(content);
             }
 
             @Override
@@ -305,6 +293,24 @@ class TextHeader extends JPanel {
         //添加两个文本框
         add(expressionTextField);
         add(resultTextField);
+    }
+
+    public void UpdateResultTextFontSize(String content) {
+        ChangeFont cf;
+        if (!content.equals("")) {
+            int max=56;
+            Font font = new BasicFont(Font.BOLD, max);
+            for (int i = max-1; font.getStringBounds(content,
+                    new FontRenderContext(new AffineTransform(), true, true)).getWidth()
+                    + 40 >= resultTextField.getParent().getSize().width; i--) {
+                font = new BasicFont(Font.BOLD, i);
+            }
+            cf = new ChangeFont(font);
+            //稍后执行changeFont操作
+            //这里这样调用是因为响应document事件时使用JTextField进入了Document部分,
+            //JTextField被加锁
+            EventQueue.invokeLater(cf);
+        }
     }
 
     //为上面的文本监听器服务,稍后执行的Runable接口实现
