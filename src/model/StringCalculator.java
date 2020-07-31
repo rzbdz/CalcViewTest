@@ -2,6 +2,10 @@ package model;
 
 import java.util.*;
 
+/**
+ * 使用double类进行计算的静态类
+ * Calculation将使用BigDecimal
+ */
 public interface StringCalculator {
     /*
      * 中缀转后缀

@@ -77,6 +77,13 @@ class TextHeader extends JPanel {
         return header;
     }
 
+    public static BigDecimal getLatestDigit(){
+        return new BigDecimal("999");
+    }
+
+    public static void setLatestDigit(BigDecimal memoryRead){
+        //do something;
+    }
     /**
      * 通过指定text来设置结果文本框
      * 已过时,debug可用
