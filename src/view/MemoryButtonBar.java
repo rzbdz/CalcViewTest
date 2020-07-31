@@ -3,6 +3,9 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Bar 顾名思义就是程序文本框下面的那一排M+M-MR 按键.
@@ -81,6 +84,22 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
         this.MRButton.setEnabled(false);
     }
 
+    public void turnNoMemoryState(boolean bool) {
+        //获取全部的components
+        for (Component component : this.getComponents()) {
+            //对于是按钮的组件
+            if (component instanceof MemoryButtonBar.MButton) {
+                //这里就排除一些不变灰的按钮,让能变灰的都变灰
+                //这里主要是参考windows的标准计算器的样子来搞的
+                if (!((MemoryButtonBar.MButton) component).getText().contains("MC") &&
+                        !((MemoryButtonBar.MButton) component).getText().contains("MR")) {
+                } else component.setEnabled(!bool);
+            }
+            //Debug code
+            //System.out.println(component.getClass().toString());
+        }
+    }
+
     @Override
     public void setErrorState(boolean bool) {
 
@@ -104,13 +123,49 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
         MButtonClickHandler() {
             super();
         }
+        private List<BigDecimal> decimalListst = new ArrayList<>();
+        BigDecimal latestDigit;
+        boolean aBoolean = false;
 
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
-            String text = "you pressed" + jb.getText();
+
+            String temp = jb.getText();
+            String text = "you pressed" + temp;
             System.out.println(text);
             //CalculatorWindow.resultTextField.setText(text);
+
+            if (decimalListst.size() == 0) {
+                decimalListst.add(new BigDecimal(0.0));
+            }
+
+            switch (temp) {
+                case "M+":
+                    latestDigit = TextHeader.getLatestDigit();
+                    decimalListst.set(decimalListst.size() - 1,
+                            decimalListst.get(decimalListst.size() - 1).add(latestDigit));
+                    break;
+                case "M-":
+                    latestDigit = TextHeader.getLatestDigit();
+                    decimalListst.set(decimalListst.size() - 1,
+                            decimalListst.get(decimalListst.size() - 1).subtract(latestDigit));
+                    break;
+                case "MR":
+                    TextHeader.setLatestDigit(decimalListst.get(decimalListst.size() - 1));
+                    break;
+                case "MC":
+                    decimalListst.clear();
+                    break;
+                case "MS":
+                    decimalListst.add(new BigDecimal(0.0));
+            }
+            if (decimalListst.size() == 0) {
+                aBoolean = true;
+            } else {
+                aBoolean = false;
+            }
+            turnNoMemoryState(aBoolean);
         }
     }
 }
