@@ -1,24 +1,19 @@
-package test.calculation;
+package model;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.math.BigDecimal;
 import java.util.*;
 
-/**
- * @author Xuan Wang
- */
-public class CalculationForStringTestPro {
-
+public interface StringCalculator {
     /*
      * 中缀转后缀
      * */
-    public static String InfixToSuffix(String str) {
-
+    public static String infixToSuffix(String str) {
+        if(PRIORITY.isEmpty()){
+            PRIORITY.put('-', 1);
+            PRIORITY.put('+', 1);
+            PRIORITY.put('*', 2);
+            PRIORITY.put('/', 2);
+            PRIORITY.put('(', 0);
+        }
         List<String> finalQueue = new ArrayList<String>();
         List<Character> operatorStack = new ArrayList<Character>();
 
@@ -83,7 +78,7 @@ public class CalculationForStringTestPro {
     /*
      * 计算结果
      * */
-    public static String getResult(String str) {
+    public static String getResultFromSuffix(String str) {
 
         String[] arr = str.split(",");
         List<String> list = new ArrayList<String>();
@@ -118,77 +113,13 @@ public class CalculationForStringTestPro {
             return list.get(0);
     }
 
+    static String getResultFromInfix(String str){
+        return getResultFromSuffix(infixToSuffix(str));
+    }
     /*
      * 设置优先级，0为最高
      * */
-    private static final Map<Character, Integer> PRIORITY = new HashMap<Character, Integer>();
+    static final Map<Character, Integer> PRIORITY = new HashMap<Character, Integer>();
 
-    static {
-        PRIORITY.put('-', 1);
-        PRIORITY.put('+', 1);
-        PRIORITY.put('*', 2);
-        PRIORITY.put('/', 2);
-        PRIORITY.put('(', 0);
-    }
 
-    @Test
-    public void test() {
-        String a = InfixToSuffix("(5/3+1)+(3)");
-        System.out.println(a);
-        System.out.println(getResult(a));
-        char[] ar = {'+', '-', '*', '/'};
-        Assert.assertTrue(generateExpressionsAndCalc(ar));
-    }
-
-    private static boolean generateExpressionsAndCalc(char[] arr) {
-        boolean returnB = true;
-        Random r = new Random(Calendar.getInstance().getTimeInMillis());
-        for (int i = 0; i < 1000; i++) {
-            StringBuilder s = new StringBuilder(r.nextInt(50) + 1 + "");
-            int b = r.nextInt(9) + 2;
-            for (int j = 0; j < b; j++) {
-                if (r.nextBoolean()) {
-                    int cu = r.nextInt(4);
-                    s.append(String.valueOf(arr[cu]));
-                    s.append('(');
-                    int kb = r.nextInt(4) + 2;
-                    boolean first = true;
-                    for (int k = 0; k < kb; k++) {
-                        cu = r.nextInt(4);
-                        if (!first) {
-                            s.append(arr[cu]);
-                        } else {
-                            first = false;
-                        }
-                        s.append(r.nextInt(50) + 1);
-                    }
-                    s.append(')');
-                    s.append(String.valueOf(arr[cu])).append(r.nextInt(50) + 1);
-                }
-                int cu = r.nextInt(4);
-                s.append(String.valueOf(arr[cu])).append(r.nextInt(50) + 1);
-            }
-            System.out.println(s);
-            ScriptEngineManager manager = new ScriptEngineManager();
-            ScriptEngine engine = manager.getEngineByName("javascript");
-            try {
-                String result = (new BigDecimal(String.valueOf(engine.eval(s.toString())))).toPlainString();
-                System.out.print(result + "      ");
-                String a;
-                try {
-                    a = getResult(InfixToSuffix(s.toString()));
-                    BigDecimal decimal1 = new BigDecimal(result);
-                    BigDecimal decimal2 = new BigDecimal(a);
-                    returnB = decimal2.subtract(decimal1).compareTo(new BigDecimal(0.1)) == -1;
-                } catch (Exception e) {
-                    a = "failed";
-                }
-                System.out.println(a);
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println(returnB);
-        return returnB;
-    }
 }

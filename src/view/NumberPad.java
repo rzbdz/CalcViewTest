@@ -10,28 +10,31 @@ import java.math.BigDecimal;
 /**
  * 这里只有 0-9 , +/- , . 按键,具体描述在下面<br>
  * 单例模式说明{@link CalculatorFrame}<br>
- *<br>
+ * <br>
  * 重要成员是内部类{@code NumberButtonClickHandler{}}
  * 负责处理按钮的事件监听<br>
  * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了<br>
  * {@link NumberButtonClickHandler}
+ *
  * @see CanTurnErrorState
  */
-class NumberPad extends JPanel implements CanTurnErrorState{
+class NumberPad extends JPanel implements CanTurnErrorState {
     ButtonClickHandler buttonClickHandler;
 
     public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
     public static final String DOT = ".";
     private static NumberPad numberPad;
-    public static NumberPad getInstance(){
-        if(numberPad==null){
+
+    public static NumberPad getInstance() {
+        if (numberPad == null) {
             numberPad = new NumberPad();
         }
         return numberPad;
     }
+
     private NumberPad() {
         buttonClickHandler = new NumberButtonClickHandler();
-        setLayout(new GridLayout(4, 3,1,1));
+        setLayout(new GridLayout(4, 3, 1, 1));
         for (int i = 7; i >= 1; i -= 3) {
             for (int j = i; j < i + 3; j++)
                 add(new NumberButton(String.valueOf(j), buttonClickHandler));
@@ -55,6 +58,7 @@ class NumberPad extends JPanel implements CanTurnErrorState{
 
         }
     }
+
     /**
      * 内部Button类,定义一些属性,尽量不修改
      */
@@ -66,26 +70,24 @@ class NumberPad extends JPanel implements CanTurnErrorState{
             this.addActionListener(handler);
         }
     }
+
     /**
      * 在这里编写数字按钮点击的事件处理
      * 需要重写方法:
      * public void actionPerformed(ActionEvent e);
      */
-    private class NumberButtonClickHandler extends ButtonClickHandler{
-        NumberButtonClickHandler(){
+    private class NumberButtonClickHandler extends ButtonClickHandler {
+        NumberButtonClickHandler() {
             super();
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
             String text = "you pressed" + jb.getText();
             System.out.println(text);
             CalculatorFrame.getInstance().setErrorState(false);
-            if (TextHeader.getResultText().equals("0")) {
-                TextHeader.setResultText(new BigDecimal(jb.getText()));
-            } else
-                TextHeader.setResultText(new BigDecimal(TextHeader.getResultText() + jb.getText()));
-
+            TextHeader.setExpressionText(TextHeader.getExpressionText() + jb.getText());
         }
     }
 

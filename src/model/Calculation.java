@@ -1,5 +1,7 @@
 package model;
 
+import test.calculation.StringCalculatorTest;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
@@ -100,7 +102,7 @@ public class Calculation {
      *
      * @param Infix 传入一个Stack,内容是Item,使用中缀表达式的stack
      * @return 返回一个deque
-     * @see test.calculation.CalculationForStringTestPro
+     * @see StringCalculatorTest
      */
     private Deque<Item> infixToSuffix(Deque<Item> Infix) {
         Deque<Item> output = new ArrayDeque<>();

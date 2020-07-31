@@ -126,6 +126,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         this.setLocation(screenSize.width / 2 - (windowMinWidth / 2), screenSize.height / 2 - (windowMinHeight / 2));
         setSize(windowMinWidth, windowMinHeight);
         this.addComponentListener(new ResizeListener());
+        this.addKeyListener(new KeyPressedHandler());
         //初始化控件们
         this.InitializeComponents();
     }
@@ -212,6 +213,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
         });
         //JSeparator jSeparator = new JSeparator(JSeparator.HORIZONTAL);
         JRadioButton jRadioButton = new JRadioButton("置顶");
+        jRadioButton.setMargin(new Insets(0,0,0,5));
         jRadioButton.addActionListener(e -> {
             this.setAlwaysOnTop(((JRadioButton) (e.getSource())).isSelected());
         });
@@ -283,6 +285,7 @@ public class CalculatorFrame extends JFrame implements CanTurnErrorState {
      * 成员静态类,用于监听窗口大小改变的事件
      * 禁止小于窗口最小大小
      * 防止用户乱拉窗口大小
+     * (构造时已经设置了min w和h,主要是系统高dpi缩放的时候还是可以乱拖拉的)
      */
     private static class ResizeListener extends ComponentAdapter {
 
