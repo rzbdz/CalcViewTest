@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Bar 顾名思义就是程序文本框下面的那一排M+M-MR 按键.
@@ -30,15 +29,24 @@ import java.util.List;
  * {@link MemoryButtonBar#MemoryPlus}<br>
  * {@link MemoryButtonBar#MemoryMinus}<br>
  * {@link MemoryButtonBar#MemorySave}<br>
- *  事件的编写在{@link MButtonClickHandler},
- *  这里可以考虑只搞一个Memory,那就写一个static的BigDecimal变量就好了
- *
+ * 事件的编写在{@link MButtonClickHandler},
+ * //如果不够时间这里可以考虑只搞一个Memory,那就写一个static的BigDecimal变量就好了
+ * 实际上最后搞了一个List,实现了列表功能
  */
-class MemoryButtonBar extends JPanel implements CanTurnErrorState{
+class MemoryButtonBar extends JPanel implements CanTurnErrorState {
     /**
      * 这个是事件监听的实例,不用管她
      */
     private ButtonClickHandler buttonClickHandler;
+    private final MyArrayList<BigDecimal> decimalList = new MyArrayList<>();
+
+    public ArrayList<BigDecimal> getDecimalList() {
+        return this.decimalList;
+    }
+    public boolean hasMemory(){
+        return this.getDecimalList().size()>0;
+    }
+
     public static final String MemoryClear = "MC";
     public static final String MemoryRead = "MR";
     public static final String MemoryPlus = "M+";
@@ -52,11 +60,11 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
     /**
      * 具体Button的实例
      */
-    private MButton MCButton;
-    private MButton MRButton;
-    private MButton MPlusButton;
-    private MButton MMinusButton;
-    private MButton MSaveButton;
+    private MemoryButton MCButton;
+    private MemoryButton MRButton;
+    private MemoryButton MPlusButton;
+    private MemoryButton MMinusButton;
+    private MemoryButton MSaveButton;
     /**
      * 单例模式的单例
      */
@@ -64,6 +72,7 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
 
     /**
      * 单例模式获取实例成员对象的方法
+     *
      * @return 返回一个Bar的实例
      */
     public static MemoryButtonBar getInstance() {
@@ -74,25 +83,29 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
 
     private MemoryButtonBar() {
         this.buttonClickHandler = new MButtonClickHandler();
-        setLayout(new GridLayout(1, 5,1,1));
-        this.add(MCButton = new MButton(MButtonStrings[0], buttonClickHandler));
-        this.add(MRButton = new MButton(MButtonStrings[1], buttonClickHandler));
-        this.add(MPlusButton = new MButton(MButtonStrings[2], buttonClickHandler));
-        this.add(MMinusButton = new MButton(MButtonStrings[3], buttonClickHandler));
-        this.add(MSaveButton = new MButton(MButtonStrings[4], buttonClickHandler));
+        setLayout(new GridLayout(1, 5, 1, 1));
+        this.add(MCButton = new MemoryButton(MButtonStrings[0], buttonClickHandler));
+        this.add(MRButton = new MemoryButton(MButtonStrings[1], buttonClickHandler));
+        this.add(MPlusButton = new MemoryButton(MButtonStrings[2], buttonClickHandler));
+        this.add(MMinusButton = new MemoryButton(MButtonStrings[3], buttonClickHandler));
+        this.add(MSaveButton = new MemoryButton(MButtonStrings[4], buttonClickHandler));
         this.MCButton.setEnabled(false);
         this.MRButton.setEnabled(false);
     }
 
-    public void turnNoMemoryState(boolean bool) {
+    /**
+     * 如果没有内存的时候,按钮要进入无内存状态
+     * @param bool true时进入无内存状态,false进入有内存状态
+     */
+    public void setNoMemoryState(boolean bool) {
         //获取全部的components
         for (Component component : this.getComponents()) {
             //对于是按钮的组件
-            if (component instanceof MemoryButtonBar.MButton) {
+            if (component instanceof MemoryButton) {
                 //这里就排除一些不变灰的按钮,让能变灰的都变灰
                 //这里主要是参考windows的标准计算器的样子来搞的
-                if (!((MemoryButtonBar.MButton) component).getText().contains("MC") &&
-                        !((MemoryButtonBar.MButton) component).getText().contains("MR")) {
+                if (!((MemoryButton) component).getText().contains("MC") &&
+                        !((MemoryButton) component).getText().contains("MR")) {
                 } else component.setEnabled(!bool);
             }
             //Debug code
@@ -100,13 +113,35 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
         }
     }
 
-    @Override
-    public void setErrorState(boolean bool) {
+    private boolean isError = false;
 
+    @Override
+    public boolean isErrorState() {
+        return isError;
     }
 
-    private class MButton extends JButton {
-        MButton(String text, ButtonClickHandler handler) {
+    @Override
+    /**
+     * 除零等错误禁止m+m-等
+     */
+    public void setErrorState(boolean bool) {
+        //获取全部的components
+        for (Component component : this.getComponents()) {
+            //对于是按钮的组件
+            if (component instanceof MemoryButton) {
+               component.setEnabled(!bool);
+            }
+            //Debug code
+            //System.out.println(component.getClass().toString());
+        }
+        if(decimalList.isEmpty()||decimalList.size()<1){
+            setNoMemoryState(true);
+        }
+        isError = bool;
+    }
+
+    private class MemoryButton extends JButton {
+        MemoryButton(String text, ButtonClickHandler handler) {
             super(text);
             setFocusable(false);
             setFont(new BasicFont(Font.BOLD, 12));
@@ -123,7 +158,7 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
         MButtonClickHandler() {
             super();
         }
-        private List<BigDecimal> decimalListst = new ArrayList<>();
+
         BigDecimal latestDigit;
         boolean aBoolean = false;
 
@@ -132,41 +167,56 @@ class MemoryButtonBar extends JPanel implements CanTurnErrorState{
             JButton jb = (JButton) (e.getSource());
 
             String temp = jb.getText();
-            String text = "you pressed" + temp;
+            String text = "Memory Button, You have Clicked: " + temp;
             System.out.println(text);
             //CalculatorWindow.resultTextField.setText(text);
 
-            if (decimalListst.size() == 0) {
-                decimalListst.add(new BigDecimal(0.0));
-            }
-
             switch (temp) {
-                case "M+":
+                case MemoryPlus:
+                    if (decimalList.size() == 0) {
+                        decimalList.add(new BigDecimal("0"));
+                    }
                     latestDigit = TextHeader.getLatestDigit();
-                    decimalListst.set(decimalListst.size() - 1,
-                            decimalListst.get(decimalListst.size() - 1).add(latestDigit));
+                    decimalList.push(decimalList.pop().add(latestDigit));
                     break;
-                case "M-":
+                case MemoryMinus:
+                    if (decimalList.size() == 0) {
+                        decimalList.add(new BigDecimal("0"));
+                    }
                     latestDigit = TextHeader.getLatestDigit();
-                    decimalListst.set(decimalListst.size() - 1,
-                            decimalListst.get(decimalListst.size() - 1).subtract(latestDigit));
+                    decimalList.push(decimalList.pop().subtract(latestDigit));
                     break;
-                case "MR":
-                    TextHeader.setLatestDigit(decimalListst.get(decimalListst.size() - 1));
+                case MemoryRead:
+                    TextHeader.getInstance().setLatestDigit(decimalList.peek());
                     break;
-                case "MC":
-                    decimalListst.clear();
+                case MemoryClear:
+                    decimalList.clear();
                     break;
-                case "MS":
-                    decimalListst.add(new BigDecimal(0.0));
+                case MemorySave:
+                    decimalList.push(TextHeader.getLatestDigit());
             }
-            if (decimalListst.size() == 0) {
-                aBoolean = true;
-            } else {
-                aBoolean = false;
-            }
-            turnNoMemoryState(aBoolean);
+            if (CalculatorFrame.getInstance().memoryToolFrame != null)
+                MemoryToolFrame.memoryJList.
+                        setListData(MemoryButtonBar.this.getDecimalList().toArray(new BigDecimal[0]));
+            aBoolean = decimalList.size() == 0;
+            setNoMemoryState(aBoolean);
         }
+    }
+}
+class MyArrayList<E> extends ArrayList<E>{
+    MyArrayList(){
+        super();
+    }
+    public E pop(){
+        E re = this.get(0);
+        remove(0);
+        return re;
+    }
+    public void push(E element){
+        add(0,element);
+    }
+    public E peek(){
+        return this.get(0);
     }
 }
 

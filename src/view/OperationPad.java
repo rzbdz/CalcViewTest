@@ -1,11 +1,8 @@
 package view;
 
-import controller.CalcController;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -19,16 +16,16 @@ import java.util.Objects;
  * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了
  * {@link BasicOperationButtonClickHandler}
  */
-class OperationPad extends JPanel implements CanTurnErrorState {
+class OperationPad extends JPanel implements CanTurnErrorState,CanSimulateKeyboard {
     ButtonClickHandler buttonClickHandler;
     public static final String BACKSPACE = "←";
-    public static final String MOD = "%";
+    public static final String PERCENT = "%";
     public static final String DIVIDES = "÷";
     public static final String TIMES = "×";
     public static final String PLUS = "+";
     public static final String MINUS = "-";
     public static final String EQUALS = "=";
-    static String[] FButtonStrings = {BACKSPACE, MOD, DIVIDES, TIMES, MINUS, PLUS, EQUALS};
+    static String[] FButtonStrings = {BACKSPACE, PERCENT, DIVIDES, TIMES, MINUS, PLUS, EQUALS};
     private static OperationPad basicOperationPad;
 
     public static OperationPad getInstance() {
@@ -44,11 +41,39 @@ class OperationPad extends JPanel implements CanTurnErrorState {
         for (String s : FButtonStrings) {
             add(new BasicOperationButton(s, buttonClickHandler));
         }
+
+    }
+    private boolean isError = false;
+
+    @Override
+    public boolean isErrorState() {
+        return isError;
     }
 
     @Override
     public void setErrorState(boolean bool) {
+        //获取全部的components
+        for (Component component : this.getComponents()) {
+            //对于是按钮的组件
+            if (component instanceof BasicOperationButton) {
+                //这里主要是参考windows的标准计算器的样子来搞的
+                component.setEnabled(!bool);
+            }
+            //Debug code
+            //System.out.println(component.getClass().toString());
+        }
+    }
 
+    @Override
+    public void simulatePressed(String text) {
+        for(var c : this.getComponents()){
+            if(c instanceof OperationPad.BasicOperationButton){
+                if(((BasicOperationButton) c).getText().contains(text)){
+                    ((BasicOperationButton) c).doClick();
+                    System.out.println("Operation Simulated: "+((BasicOperationButton) c).getText());
+                }
+            }
+        }
     }
 
     private static class BasicOperationButton extends JButton {
@@ -77,32 +102,22 @@ class OperationPad extends JPanel implements CanTurnErrorState {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
-            String text = TextHeader.getResultText();
-            if (jb.getText().equals(OperationPad.BACKSPACE)) {
-                if (text.length() <= 1) {
-                    text = "0";
-                } else {
-                    var d = TextHeader.getResultTextDecimal();
-                    text = d.toString().substring(0,d.toString().length()-1);
-                }
-                TextHeader.setResultText(new BigDecimal(text));
-            } else if (jb.getText().equals(OperationPad.EQUALS)) {
-                if(TextHeader.getExpressionText()!=null&&! TextHeader.getExpressionText().equals("")){
-                    CalcController c = CalcController.getInstance();
-                    try{
-                        c.updateModel(TextHeader.getExpressionText());
-                        TextHeader.setExpressionText(TextHeader.getExpressionText()+'=');
-                        TextHeader.setResultText(c.updateView());
-                    }catch (Exception controllerException){
-                        TextHeader.setResultText(controllerException.getMessage());
-                        CalculatorFrame.getInstance().setErrorState(true);
-                    }
-                }
-
-            } else {
-                text = "you pressed99999999999999 " + jb.getText();
-                System.out.println(text);
-                TextHeader.setExpressionText(TextHeader.getExpressionText()+jb.getText());
+            switch (jb.getText()) {
+                case OperationPad.EQUALS:
+                    TextHeader.getInstance().turnEqualState();
+                    break;
+                case OperationPad.BACKSPACE:
+                    TextHeader.getInstance().backSpace();
+                    break;
+                case OperationPad.DIVIDES:
+                case OperationPad.MINUS:
+                case OperationPad.PLUS:
+                case OperationPad.TIMES:
+                case OperationPad.PERCENT:
+                    TextHeader.getInstance().updatePostOperator(jb.getText());
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + jb.getText());
             }
         }
     }

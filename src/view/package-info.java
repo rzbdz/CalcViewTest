@@ -8,5 +8,6 @@
  *  <li>{@link view.NumberPad}:4*3的数字按钮(窗口左下),小数点,以及正负号转变按钮</li>
  *  <li>{@link view.OperationPad}:7*1的运算按钮(窗口最右边),包括退格键到等号的按钮</li>
  * </ul>
+ * 图标ICON需要放到类加载器目录的src/icon.png内
  */
 package view;

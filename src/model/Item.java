@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 /**
  * 定义Item类作为Operator和Number(Digital)的基类<br>
- * 我想使用Union的写法来匹配一个表达式Item,<br>
  * 目前是这样定义的<br>
  * Item:
  * <ul>
@@ -19,7 +18,13 @@ public abstract class Item {
      * 定义Operator的枚举
      */
     public enum OPERATOR {
-        PLUS, MINUS, TIMES, DIVIDES, LEFT_BRACKET, RIGHT_BRACKET;
+        PLUS, //+
+        MINUS, //-
+        TIMES, //*
+        DIVIDES, ///
+        POW,//^
+        LEFT_BRACKET,//(
+        RIGHT_BRACKET;//)
     }
 
     ;

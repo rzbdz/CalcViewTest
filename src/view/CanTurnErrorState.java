@@ -19,4 +19,5 @@ public interface CanTurnErrorState {
      * @param bool true则错误state
      */
     public void setErrorState(boolean bool);
+    public boolean isErrorState();
 }

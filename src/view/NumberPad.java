@@ -1,11 +1,10 @@
 package view;
 
-import controller.CalcController;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
-import java.math.BigDecimal;
+import java.awt.event.KeyEvent;
 
 /**
  * 这里只有 0-9 , +/- , . 按键,具体描述在下面<br>
@@ -18,7 +17,7 @@ import java.math.BigDecimal;
  *
  * @see CanTurnErrorState
  */
-class NumberPad extends JPanel implements CanTurnErrorState {
+class NumberPad extends JPanel implements CanTurnErrorState,CanSimulateKeyboard {
     ButtonClickHandler buttonClickHandler;
 
     public static final String TURN_POSITIVE_OR_NEGATIVE = "+/-";
@@ -47,15 +46,34 @@ class NumberPad extends JPanel implements CanTurnErrorState {
         add(new NumberButton(".", buttonClickHandler));
     }
 
+    private boolean isError = false;
+
+    @Override
+    public boolean isErrorState() {
+        return isError;
+    }
+
     @Override
     public void setErrorState(boolean bool) {
         for (Component co : this.getComponents()) {
             if (co instanceof NumberButton) {
-                if (((NumberButton) co).getText().contains(DOT)) {
-                } else co.setEnabled(!bool);
+                if (((NumberButton) co).getText().equals(DOT) || ((NumberButton) co).getText().equals(TURN_POSITIVE_OR_NEGATIVE))
+                    co.setEnabled(!bool);
             }
             //System.out.println(co.getClass().toString());  //得到co的类型
 
+        }
+        isError = bool;
+    }
+
+    public void simulatePressed(String text) {
+        for(Component co : this.getComponents()){
+            if(co instanceof  NumberButton){
+                if(((NumberButton) co).getText().contains(text)){
+                    System.out.println("NumberPad Keyboard Simulated: "+((NumberButton) co).getText());
+                    ((NumberButton) co).doClick();
+                }
+            }
         }
     }
 
@@ -84,11 +102,20 @@ class NumberPad extends JPanel implements CanTurnErrorState {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
-            String text = "you pressed" + jb.getText();
-            System.out.println(text);
-            CalculatorFrame.getInstance().setErrorState(false);
-            TextHeader.setExpressionText(TextHeader.getExpressionText() + jb.getText());
+            System.out.println("NumberPad: " + jb.getText());
+            jb.getParent().requestFocusInWindow();
+            switch (jb.getText()) {
+                case NumberPad.TURN_POSITIVE_OR_NEGATIVE:
+                    TextHeader.getInstance().turnOppositeSign();
+                    break;
+                case NumberPad.DOT:
+                default:
+                    TextHeader.getInstance().updateDigit(jb.getText());
+                    break;
+            }
         }
+
+
     }
 
 }

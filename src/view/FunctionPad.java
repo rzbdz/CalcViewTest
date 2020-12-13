@@ -15,9 +15,10 @@ import java.math.BigDecimal;
  * 说明:对于这些Panel,不用处理UI的部分了,只需要写那个Handler就好了.<br>
  * 重要成员二是方法{@code setErrorState(boolean)},这个见参考
  * 实现的接口.<br>
+ *
  * @see CanTurnErrorState
  */
-class FunctionPad extends JPanel implements CanTurnErrorState {
+class FunctionPad extends JPanel implements CanTurnErrorState ,CanSimulateKeyboard {
     ButtonClickHandler buttonClickHandler;
     public static final String X_Y = "xʸ";
     public static final String CE = "CE";
@@ -28,13 +29,14 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
     public static final String LEFT_BRACKET = "(";
     public static final String RIGHT_BRACKET = ")";
     public static final String ABS = "|x|";
-    static String[] FButtonStrings = {CE, C};
+    static String[] FButtonStrings = {C, CE};
     static String[] FButtonStringsWithX = {X_Y, X_SQUARE, SQRT};
 
     private static FunctionPad functionPad;
 
     /**
      * 单例模式获取实例
+     *
      * @return 返回FunctionPad的一个实例
      * @see CalculatorFrame
      */
@@ -46,7 +48,7 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
 
     private FunctionPad() {
         this.buttonClickHandler = new FunctionButtonClickHandler();
-        setLayout(new GridLayout(3, 3,1,1));
+        setLayout(new GridLayout(3, 3, 1, 1));
         add(new FunctionButton(ONE_DIVIDES_X, buttonClickHandler, new Font("Times New Roman", Font.ITALIC, 16)));
         //普通字,使用默认字体
         for (String s : FButtonStrings) {
@@ -62,6 +64,24 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
                 new Font("Times New Roman", Font.ITALIC, 16)));
     }
 
+    public void simulatePressed(String text) {
+        for(Component co : this.getComponents()){
+            if(co instanceof FunctionPad.FunctionButton){
+                if(((FunctionButton) co).getText().contains(text)){
+                    System.out.println("FunctionPad Keyboard Simulated: "+((FunctionButton) co).getText());
+                    ((FunctionButton) co).doClick();
+                }
+            }
+        }
+    }
+
+    private boolean isError = false;
+
+    @Override
+    public boolean isErrorState() {
+        return isError;
+    }
+
     @Override
     /**
      * <b>重要成员</b>
@@ -75,14 +95,14 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
             if (component instanceof FunctionButton) {
                 //这里就排除一些不变灰的按钮,让能变灰的都变灰
                 //这里主要是参考windows的标准计算器的样子来搞的
-                if (((FunctionButton) component).getText().contains(C) ||
-                        ((FunctionButton) component).getText().contains(CE)) {
+                if (((FunctionButton) component).getText().contains(CE)) {
                 } else component.setEnabled(!bool);
             }
             //Debug code
             //System.out.println(component.getClass().toString());
 
         }
+        isError = bool;
     }
 
     /**
@@ -111,7 +131,7 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
      * 需要重写方法:
      * public void actionPerformed(ActionEvent e);
      */
-    private static class FunctionButtonClickHandler extends ButtonClickHandler implements CanTurnErrorState{
+    private static class FunctionButtonClickHandler extends ButtonClickHandler {
 
         FunctionButtonClickHandler() {
             super();
@@ -120,25 +140,38 @@ class FunctionPad extends JPanel implements CanTurnErrorState {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton jb = (JButton) (e.getSource());
-            String text = "you pressed" + jb.getText();
-            System.out.println(text);
-            if (jb.getText().equals(FunctionPad.CE)) {
-                //CE
-                TextHeader.setResultText(new BigDecimal("0"));
-                FunctionPad.getInstance().setErrorState(false);
-            } else if (jb.getText().equals(FunctionPad.C)) {
-                //C
-                TextHeader.setResultText(new BigDecimal("0"));
-                TextHeader.setExpressionText("");
-                CalculatorFrame.getInstance().setErrorState(false);
-            } else if (jb.getText().equals(FunctionPad.LEFT_BRACKET)) {
+            System.out.println("FunctionPad: " + jb.getText());
+            switch (jb.getText()) {
+                case FunctionPad.C:
+                    TextHeader.getInstance().setCState();
+                    break;
+                case FunctionPad.CE:
+                    TextHeader.getInstance().setCEState();
+                    break;
+                case FunctionPad.LEFT_BRACKET:
+                case FunctionPad.RIGHT_BRACKET:
+                    TextHeader.getInstance().updatePostOperator(jb.getText());
+                    break;
+                case FunctionPad.X_Y:
+                    TextHeader.getInstance().updatePostOperator("^");
+                    break;
+                case FunctionPad.ABS:
+                    TextHeader.getInstance().updateUnaryOperator("abs(" + TextHeader.getResultTextDecimal().stripTrailingZeros().toPlainString() + ")");
+                    break;
+                case FunctionPad.SQRT:
+                    TextHeader.getInstance().updateUnaryOperator("√(" + TextHeader.getResultTextDecimal().stripTrailingZeros().toPlainString() + ")");
+                    break;
+                case FunctionPad.ONE_DIVIDES_X:
+                    TextHeader.getInstance().updateUnaryOperator("1/(" + TextHeader.getResultTextDecimal().stripTrailingZeros().toPlainString() + ")");
+                    break;
+                case FunctionPad.X_SQUARE:
+                    TextHeader.getInstance().updateUnaryOperator(TextHeader.getResultTextDecimal().stripTrailingZeros().toPlainString()+"^2");
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + jb.getText());
             }
         }
 
-        @Override
-        public void setErrorState(boolean bool) {
-
-        }
     }
 }
 
